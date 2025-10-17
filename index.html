@@ -2991,6 +2991,10 @@ function formatSuggestionText(mode, text) {
   return `{${token}}: ${text}`;
 }
 
+function formatSuggestionCopyText(mode, text) {
+  return `    "${formatSuggestionText(mode, text)}",`;
+}
+
 function renderSuggestionsList() {
   if (!suggestionsListEl) return;
   suggestionsListEl.innerHTML = '';
@@ -3067,7 +3071,7 @@ async function copySuggestionEntries() {
   const entries = Array.isArray(state.suggestions) ? state.suggestions : [];
   if (!entries.length) return;
 
-  const payload = entries.map((entry) => formatSuggestionText(entry.mode, entry.text)).join('\n');
+  const payload = entries.map((entry) => formatSuggestionCopyText(entry.mode, entry.text)).join('\n');
 
   let success = false;
   if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
