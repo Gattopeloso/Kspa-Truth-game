@@ -26,6 +26,7 @@
   --shadow: 0 30px 80px rgba(5, 6, 25, 0.75);
   --surface: rgba(30, 41, 59, 0.85);
   --surface-muted: rgba(51, 65, 85, 0.6);
+  --menu-hint-space: 0px;
 }
 
 * {
@@ -94,12 +95,14 @@ header {
 }
 
 .menu-hint {
-  display: block;
+  display: flex;
+  align-items: flex-start;
   margin-top: 0.35rem;
   color: rgba(226, 232, 240, 0.78);
   font-size: 0.92rem;
   line-height: 1.45;
   max-width: min(640px, 100%);
+  min-height: var(--menu-hint-space, 0px);
   opacity: 0;
   transition: opacity 0.18s ease;
   pointer-events: none;
@@ -2554,6 +2557,7 @@ const categoriesPanelEl = categoriesOverlayEl ? categoriesOverlayEl.querySelecto
 const toggleAllCategoriesBtn = document.getElementById('toggleAllCategoriesBtn');
 const menuHintEl = document.getElementById('menuHint');
 const menuHintButtons = document.querySelectorAll('.menu-toggle[data-hint]');
+const menuHintHeaderEl = menuHintEl ? menuHintEl.closest('header') : null;
 const autoSpeakSupportEl = document.getElementById('autoSpeakSupport');
 const speakBtnEl = document.getElementById('speakBtn');
 const stopSpeakBtnEl = document.getElementById('stopSpeakBtn');
@@ -2570,6 +2574,58 @@ function setOverlayState(overlayEl, toggleBtn, open) {
 }
 
 if (menuHintEl && menuHintButtons.length) {
+  const setMenuHintSpace = () => {
+    if (!menuHintHeaderEl) return;
+    const headerStyles = window.getComputedStyle(menuHintHeaderEl);
+    const paddingLeft = parseFloat(headerStyles.paddingLeft || '0');
+    const paddingRight = parseFloat(headerStyles.paddingRight || '0');
+    const availableWidth = menuHintHeaderEl.clientWidth - paddingLeft - paddingRight;
+    const measurementWidth = Math.min(640, Math.max(availableWidth, 0));
+
+    if (!measurementWidth) {
+      document.documentElement.style.setProperty('--menu-hint-space', '0px');
+      return;
+    }
+
+    const measureEl = document.createElement('div');
+    measureEl.className = 'menu-hint';
+    measureEl.style.position = 'absolute';
+    measureEl.style.visibility = 'hidden';
+    measureEl.style.pointerEvents = 'none';
+    measureEl.style.opacity = '0';
+    measureEl.style.margin = '0';
+    measureEl.style.left = '-9999px';
+    measureEl.style.top = '0';
+    measureEl.style.minHeight = '0';
+    measureEl.style.width = `${measurementWidth}px`;
+    menuHintHeaderEl.appendChild(measureEl);
+
+    let maxHeight = 0;
+    menuHintButtons.forEach((btn) => {
+      const hint = (btn.dataset.hint || '').trim();
+      if (!hint) return;
+      measureEl.textContent = hint;
+      const height = Math.ceil(measureEl.getBoundingClientRect().height);
+      if (height > maxHeight) {
+        maxHeight = height;
+      }
+    });
+
+    menuHintHeaderEl.removeChild(measureEl);
+
+    document.documentElement.style.setProperty('--menu-hint-space', `${maxHeight}px`);
+  };
+
+  setMenuHintSpace();
+
+  let menuHintResizeTimer = null;
+  window.addEventListener('resize', () => {
+    if (menuHintResizeTimer) {
+      clearTimeout(menuHintResizeTimer);
+    }
+    menuHintResizeTimer = setTimeout(setMenuHintSpace, 150);
+  });
+
   const updateMenuHint = (text) => {
     const hintText = text?.trim() || '';
     menuHintEl.textContent = hintText;
