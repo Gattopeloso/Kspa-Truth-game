@@ -420,6 +420,233 @@ header {
   outline-offset: 2px;
 }
 
+.suggestions-panel {
+  width: min(680px, 100%);
+  gap: 1.4rem;
+  padding: clamp(2rem, 4vw, 2.75rem) clamp(1.8rem, 3.2vw, 2.4rem);
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  max-height: min(82vh, 680px);
+  overflow: hidden;
+}
+
+.suggestions-help {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  line-height: 1.5;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.suggestions-help strong {
+  color: #22d3ee;
+}
+
+.suggestions-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.suggestion-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
+}
+
+.suggestion-mode-btn {
+  border: none;
+  background: transparent;
+  color: rgba(226, 232, 240, 0.72);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.45rem 1.15rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.suggestion-mode-btn[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.9), rgba(99, 102, 241, 0.9));
+  color: #0f172a;
+  box-shadow: 0 10px 26px rgba(99, 102, 241, 0.45);
+  transform: translateY(-1px);
+}
+
+.suggestion-mode-btn:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+}
+
+.suggestions-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.86);
+}
+
+#suggestionInput {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  color: var(--fg);
+  padding: 0.9rem 1rem;
+  min-height: 130px;
+  font-size: 1rem;
+  resize: vertical;
+  transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#suggestionInput::placeholder {
+  color: rgba(226, 232, 240, 0.6);
+}
+
+#suggestionInput:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  transform: translateY(-1px);
+}
+
+.suggestion-submit {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #22d3ee, #6366f1);
+  color: #0f172a;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.7rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.suggestion-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.45);
+}
+
+.suggestion-submit:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.suggestions-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.22);
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 120px;
+  max-height: min(52vh, 360px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.35rem;
+}
+
+.suggestion-entry {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 20px;
+  padding: clamp(0.85rem, 2.6vw, 1.25rem);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.suggestion-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.suggestion-entry-mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(148, 163, 184, 0.18);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.suggestion-entry-mode[data-mode="ALL"] {
+  background: rgba(34, 211, 238, 0.2);
+  color: #22d3ee;
+}
+
+.suggestion-entry-mode[data-mode="PLAYER"] {
+  background: rgba(244, 114, 182, 0.2);
+  color: #f472b6;
+}
+
+.suggestion-text {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.55;
+  color: #e2e8f0;
+  word-break: break-word;
+}
+
+.suggestions-empty {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.7);
+  font-style: italic;
+}
+
+.suggestions-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.suggestion-remove {
+  border: 1px solid rgba(248, 113, 113, 0.65);
+  background: transparent;
+  color: #fca5a5;
+  padding: 0.3rem 0.95rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.suggestion-remove:hover,
+.suggestion-remove:focus-visible {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fee2e2;
+  border-color: rgba(252, 165, 165, 0.95);
+  outline: none;
+}
+
+.suggestion-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.suggestions-actions .ghost-btn {
+  align-self: flex-end;
+}
+
 .rewind-question {
   margin: 0;
   font-size: clamp(1rem, 2vw, 1.45rem);
@@ -863,7 +1090,8 @@ main {
 }
 
 #dislikeBtn::after,
-#flaggedToggle::after {
+#flaggedToggle::after,
+#suggestionsToggle::after {
   content: attr(data-count);
   position: absolute;
   top: -0.35rem;
@@ -883,11 +1111,13 @@ main {
 }
 
 #dislikeBtn[data-count=""]::after,
-#flaggedToggle[data-count=""]::after {
+#flaggedToggle[data-count=""]::after,
+#suggestionsToggle[data-count=""]::after {
   display: none;
 }
 
-#flaggedToggle {
+#flaggedToggle,
+#suggestionsToggle {
   position: relative;
 }
 
@@ -1256,6 +1486,17 @@ main {
         Rewind
       </button>
       <button
+        id="suggestionsToggle"
+        class="menu-toggle"
+        type="button"
+        aria-controls="playerSuggestionsOverlay"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        data-hint="Player Suggestions: Collect custom prompts from your players, copy them into a .txt file, and DM Gatto on Discord."
+      >
+        Player Suggestions
+      </button>
+      <button
         id="flaggedToggle"
         class="menu-toggle"
         type="button"
@@ -1278,8 +1519,8 @@ main {
         <div class="badge-row">
           <div id="cycle_players" class="cycle-pill"></div>
         </div>
-        <div id="category">✨ KSPA Truth Game ✨</div>
-        <div id="question">Open the Control Panel, add anyone you want to the crew and press START to draw a sparkling challenge.</div>
+        <div id="category">✨ K-Spa Truth Game ✨</div>
+        <div id="question">Open the Control Panel button above, add your players, and press START to begin the fun.</div>
         <div class="action-cluster" id="actionCluster" hidden aria-label="Question controls">
           <button id="speakBtn" class="btn action-btn" type="button" aria-label="Play question audio">🔈</button>
           <button id="stopSpeakBtn" class="btn action-btn" type="button" aria-label="Stop question audio">🔇</button>
@@ -1400,6 +1641,65 @@ main {
       </div>
     </div>
     <div
+      id="playerSuggestionsOverlay"
+      class="overlay-menu"
+      aria-hidden="true"
+    >
+      <div
+        class="control-panel suggestions-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="suggestionsTitle"
+        tabindex="-1"
+      >
+        <button
+          id="closeSuggestionsBtn"
+          class="overlay-close"
+          type="button"
+          aria-label="Close player suggestions panel"
+        >✕</button>
+        <h2 class="overlay-title" id="suggestionsTitle">Player suggestions</h2>
+        <p class="suggestions-help">
+          Invite your crew to pitch new prompts. Copy the list into a <strong>.txt</strong> file and DM
+          <strong>Gatto</strong> on Discord.
+        </p>
+        <form id="suggestionsForm" class="suggestions-form">
+          <div class="suggestion-mode" role="group" aria-label="Suggestion template">
+            <button
+              type="button"
+              class="suggestion-mode-btn"
+              data-suggestion-mode="ALL"
+              aria-pressed="true"
+            >
+              For Everyone
+            </button>
+            <button
+              type="button"
+              class="suggestion-mode-btn"
+              data-suggestion-mode="PLAYER"
+              aria-pressed="false"
+            >
+              For Player
+            </button>
+          </div>
+          <label class="suggestions-label" for="suggestionInput">Custom question</label>
+          <textarea
+            id="suggestionInput"
+            name="suggestion"
+            placeholder="Type the custom question players suggested…"
+            rows="4"
+            required
+          ></textarea>
+          <button type="submit" class="suggestion-submit">Add suggestion</button>
+        </form>
+        <div class="suggestions-divider" aria-hidden="true"></div>
+        <div id="suggestionsList" class="suggestions-list" aria-live="polite"></div>
+        <div class="suggestions-actions">
+          <button id="copySuggestionsBtn" class="ghost-btn" type="button">Copy list</button>
+        </div>
+      </div>
+    </div>
+    <div
       id="categoriesOverlay"
       class="overlay-menu"
       aria-hidden="true"
@@ -1438,6 +1738,8 @@ let questionWordTargets = [];
 let questionAnimationQueue = Promise.resolve();
 let currentQuestionPlainText = questionEl ? questionEl.textContent.replace(/\s+/g, ' ').trim() : '';
 let copyFlaggedFeedbackTimeout = null;
+let copySuggestionsFeedbackTimeout = null;
+let suggestionMode = 'ALL';
 
 function wrapQuestionWords(container, startOffset = '100%') {
   if (!container) return [];
@@ -1666,6 +1968,7 @@ const state = {
   players: [],
   history: [],
   flagged: new Map(),
+  suggestions: [],
   current: null,
   lastPlayer: null,
   cycle: 1,
@@ -1795,13 +2098,7 @@ function refreshPlayers(feedback) {
   renderPlayersList();
   const msg = document.getElementById('playersMessage');
   if (msg) {
-    if (feedback) {
-      msg.textContent = feedback;
-    } else if (state.players.length) {
-      msg.textContent = '';
-    } else {
-      msg.textContent = 'No players yet. Add someone to get the game going!';
-    }
+    msg.textContent = feedback || '';
   }
   updateCycleDisplay();
   const skipBtn = document.getElementById('skipBtn');
@@ -2231,19 +2528,28 @@ const setupOverlayEl = document.getElementById('setupOverlay');
 const categoriesOverlayEl = document.getElementById('categoriesOverlay');
 const rewindOverlayEl = document.getElementById('rewindOverlay');
 const flaggedOverlayEl = document.getElementById('flaggedOverlay');
+const suggestionsOverlayEl = document.getElementById('playerSuggestionsOverlay');
 const setupToggleBtn = document.getElementById('setupToggle');
 const categoriesToggleBtn = document.getElementById('categoriesToggle');
 const rewindToggleBtn = document.getElementById('rewindToggle');
 const flaggedToggleBtn = document.getElementById('flaggedToggle');
+const suggestionsToggleBtn = document.getElementById('suggestionsToggle');
 const closeSetupBtn = document.getElementById('closeSetupBtn');
 const closeCategoriesBtn = document.getElementById('closeCategoriesBtn');
 const closeRewindBtn = document.getElementById('closeRewindBtn');
 const closeFlaggedBtn = document.getElementById('closeFlaggedBtn');
+const closeSuggestionsBtn = document.getElementById('closeSuggestionsBtn');
 const rewindPanelEl = document.getElementById('rewindPanel');
 const rewindContentEl = document.getElementById('rewindContent');
 const flaggedPanelEl = flaggedOverlayEl ? flaggedOverlayEl.querySelector('.flagged-panel') : null;
 const flaggedContentEl = document.getElementById('flaggedContent');
 const copyFlaggedBtn = document.getElementById('copyFlaggedBtn');
+const suggestionsPanelEl = suggestionsOverlayEl ? suggestionsOverlayEl.querySelector('.suggestions-panel') : null;
+const suggestionsFormEl = document.getElementById('suggestionsForm');
+const suggestionInputEl = document.getElementById('suggestionInput');
+const suggestionModeButtons = document.querySelectorAll('.suggestion-mode-btn');
+const suggestionsListEl = document.getElementById('suggestionsList');
+const copySuggestionsBtn = document.getElementById('copySuggestionsBtn');
 const categoriesPanelEl = categoriesOverlayEl ? categoriesOverlayEl.querySelector('.categories-panel') : null;
 const toggleAllCategoriesBtn = document.getElementById('toggleAllCategoriesBtn');
 const menuHintEl = document.getElementById('menuHint');
@@ -2457,6 +2763,9 @@ function openFlaggedOverlay() {
   if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
     closeRewindOverlay({ returnFocus: false });
   }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
+  }
   renderFlaggedContent();
   setOverlayState(flaggedOverlayEl, flaggedToggleBtn, true);
   window.requestAnimationFrame(() => {
@@ -2598,6 +2907,181 @@ async function copyFlaggedQuestions() {
   }, success ? 2200 : 2600);
 }
 
+function resetCopySuggestionsButton() {
+  if (!copySuggestionsBtn) return;
+  window.clearTimeout(copySuggestionsFeedbackTimeout);
+  copySuggestionsBtn.dataset.state = '';
+  copySuggestionsBtn.textContent = 'Copy list';
+}
+
+function updateSuggestionsIndicators() {
+  const entries = Array.isArray(state.suggestions) ? state.suggestions : [];
+  const count = entries.length;
+  const countValue = count ? String(count) : '';
+  if (suggestionsToggleBtn) {
+    suggestionsToggleBtn.dataset.count = countValue;
+    const label = count
+      ? `Open player suggestions (${count})`
+      : 'Open player suggestions';
+    suggestionsToggleBtn.setAttribute('aria-label', label);
+  }
+  if (copySuggestionsBtn) {
+    copySuggestionsBtn.disabled = count === 0;
+  }
+}
+
+function formatSuggestionText(mode, text) {
+  const token = mode === 'PLAYER' ? 'PLAYER' : 'ALL';
+  return `{${token}}: ${text}`;
+}
+
+function renderSuggestionsList() {
+  if (!suggestionsListEl) return;
+  suggestionsListEl.innerHTML = '';
+  updateSuggestionsIndicators();
+
+  const entries = Array.isArray(state.suggestions) ? state.suggestions : [];
+  if (!entries.length) {
+    const empty = document.createElement('p');
+    empty.className = 'suggestions-empty';
+    empty.textContent = 'No suggestions yet.';
+    suggestionsListEl.appendChild(empty);
+    return;
+  }
+
+  entries.forEach((entry) => {
+    const item = document.createElement('article');
+    item.className = 'suggestion-entry';
+    item.dataset.id = entry.id;
+
+    const header = document.createElement('div');
+    header.className = 'suggestion-entry-header';
+
+    const modeBadge = document.createElement('span');
+    modeBadge.className = 'suggestion-entry-mode';
+    modeBadge.dataset.mode = entry.mode === 'PLAYER' ? 'PLAYER' : 'ALL';
+    modeBadge.textContent = entry.mode === 'PLAYER' ? 'For Player' : 'For Everyone';
+    header.appendChild(modeBadge);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'suggestion-remove';
+    removeBtn.dataset.action = 'remove-suggestion';
+    removeBtn.dataset.id = entry.id;
+    removeBtn.setAttribute(
+      'aria-label',
+      `Remove suggestion ${entry.mode === 'PLAYER' ? 'for player' : 'for everyone'}`
+    );
+    removeBtn.textContent = 'Remove';
+    header.appendChild(removeBtn);
+
+    item.appendChild(header);
+
+    const textPara = document.createElement('p');
+    textPara.className = 'suggestion-text';
+    textPara.textContent = formatSuggestionText(entry.mode, entry.text);
+    item.appendChild(textPara);
+
+    suggestionsListEl.appendChild(item);
+  });
+}
+
+function removeSuggestionEntry(id) {
+  if (!Array.isArray(state.suggestions) || !id) return;
+  const index = state.suggestions.findIndex((entry) => entry.id === id);
+  if (index === -1) return;
+  state.suggestions.splice(index, 1);
+  resetCopySuggestionsButton();
+  renderSuggestionsList();
+}
+
+function setSuggestionMode(nextMode) {
+  const normalized = nextMode === 'PLAYER' ? 'PLAYER' : 'ALL';
+  suggestionMode = normalized;
+  if (suggestionModeButtons && suggestionModeButtons.length) {
+    suggestionModeButtons.forEach((btn) => {
+      const btnMode = btn.dataset.suggestionMode === 'PLAYER' ? 'PLAYER' : 'ALL';
+      btn.setAttribute('aria-pressed', (btnMode === suggestionMode).toString());
+    });
+  }
+}
+
+async function copySuggestionEntries() {
+  if (!copySuggestionsBtn) return;
+  const entries = Array.isArray(state.suggestions) ? state.suggestions : [];
+  if (!entries.length) return;
+
+  const payload = entries.map((entry) => formatSuggestionText(entry.mode, entry.text)).join('\n');
+
+  let success = false;
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    try {
+      await navigator.clipboard.writeText(payload);
+      success = true;
+    } catch (_) {}
+  }
+
+  if (!success) {
+    const helper = document.createElement('textarea');
+    helper.value = payload;
+    helper.setAttribute('aria-hidden', 'true');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    helper.style.pointerEvents = 'none';
+    document.body.appendChild(helper);
+    helper.focus();
+    helper.select();
+    try {
+      success = document.execCommand('copy');
+    } catch (_) {
+      success = false;
+    }
+    helper.remove();
+  }
+
+  const originalText = 'Copy list';
+  copySuggestionsBtn.textContent = success ? 'Copied!' : 'Copy failed';
+  copySuggestionsBtn.dataset.state = success ? 'success' : 'error';
+  window.clearTimeout(copySuggestionsFeedbackTimeout);
+  copySuggestionsFeedbackTimeout = window.setTimeout(() => {
+    copySuggestionsBtn.dataset.state = '';
+    copySuggestionsBtn.textContent = originalText;
+  }, success ? 2200 : 2600);
+}
+
+function closeSuggestionsOverlay({ returnFocus = true } = {}) {
+  if (!suggestionsOverlayEl || !suggestionsOverlayEl.classList.contains('open')) return;
+  setOverlayState(suggestionsOverlayEl, suggestionsToggleBtn, false);
+  if (returnFocus && suggestionsToggleBtn) {
+    suggestionsToggleBtn.focus({ preventScroll: true });
+  }
+}
+
+function openSuggestionsOverlay() {
+  if (!suggestionsOverlayEl) return;
+  if (setupOverlayEl && setupOverlayEl.classList.contains('open')) {
+    closeSetupOverlay({ returnFocus: false });
+  }
+  if (categoriesOverlayEl && categoriesOverlayEl.classList.contains('open')) {
+    closeCategoriesOverlay({ returnFocus: false });
+  }
+  if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+    closeRewindOverlay({ returnFocus: false });
+  }
+  if (flaggedOverlayEl && flaggedOverlayEl.classList.contains('open')) {
+    closeFlaggedOverlay({ returnFocus: false });
+  }
+  renderSuggestionsList();
+  setOverlayState(suggestionsOverlayEl, suggestionsToggleBtn, true);
+  window.requestAnimationFrame(() => {
+    if (suggestionInputEl) {
+      suggestionInputEl.focus({ preventScroll: true });
+    } else if (suggestionsPanelEl) {
+      suggestionsPanelEl.focus({ preventScroll: true });
+    }
+  });
+}
+
 function closeSetupOverlay({ returnFocus = true } = {}) {
   if (!setupOverlayEl || !setupOverlayEl.classList.contains('open')) return;
   setOverlayState(setupOverlayEl, setupToggleBtn, false);
@@ -2630,6 +3114,9 @@ function openSetupOverlay() {
   if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
     closeRewindOverlay({ returnFocus: false });
   }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
+  }
   setOverlayState(setupOverlayEl, setupToggleBtn, true);
   window.requestAnimationFrame(() => {
     const input = document.getElementById('playersInput');
@@ -2649,6 +3136,9 @@ function openCategoriesOverlay() {
   if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
     closeRewindOverlay({ returnFocus: false });
   }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
+  }
   setOverlayState(categoriesOverlayEl, categoriesToggleBtn, true);
   window.requestAnimationFrame(() => {
     const firstChip = categoriesOverlayEl.querySelector('#sections button');
@@ -2667,6 +3157,9 @@ function openRewindOverlay() {
   }
   if (categoriesOverlayEl && categoriesOverlayEl.classList.contains('open')) {
     closeCategoriesOverlay({ returnFocus: false });
+  }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
   }
   renderRewindContent();
   setOverlayState(rewindOverlayEl, rewindToggleBtn, true);
@@ -2693,6 +3186,16 @@ if (categoriesToggleBtn && categoriesOverlayEl) {
       closeCategoriesOverlay();
     } else {
       openCategoriesOverlay();
+    }
+  });
+}
+
+if (suggestionsToggleBtn && suggestionsOverlayEl) {
+  suggestionsToggleBtn.addEventListener('click', () => {
+    if (suggestionsOverlayEl.classList.contains('open')) {
+      closeSuggestionsOverlay();
+    } else {
+      openSuggestionsOverlay();
     }
   });
 }
@@ -2747,6 +3250,10 @@ if (closeFlaggedBtn) {
   closeFlaggedBtn.addEventListener('click', () => closeFlaggedOverlay());
 }
 
+if (closeSuggestionsBtn) {
+  closeSuggestionsBtn.addEventListener('click', () => closeSuggestionsOverlay());
+}
+
 if (setupOverlayEl) {
   setupOverlayEl.addEventListener('click', (event) => {
     if (event.target === setupOverlayEl) {
@@ -2771,6 +3278,14 @@ if (rewindOverlayEl) {
   });
 }
 
+if (suggestionsOverlayEl) {
+  suggestionsOverlayEl.addEventListener('click', (event) => {
+    if (event.target === suggestionsOverlayEl) {
+      closeSuggestionsOverlay();
+    }
+  });
+}
+
 if (copyFlaggedBtn) {
   copyFlaggedBtn.addEventListener('click', () => {
     copyFlaggedQuestions();
@@ -2786,6 +3301,59 @@ if (flaggedContentEl) {
     removeFlaggedEntry(key);
   });
 }
+
+if (copySuggestionsBtn) {
+  copySuggestionsBtn.addEventListener('click', () => {
+    copySuggestionEntries();
+  });
+}
+
+if (suggestionsListEl) {
+  suggestionsListEl.addEventListener('click', (event) => {
+    const trigger = event.target.closest('[data-action="remove-suggestion"]');
+    if (!trigger) return;
+    const { id } = trigger.dataset;
+    if (!id) return;
+    removeSuggestionEntry(id);
+  });
+}
+
+if (suggestionsFormEl && suggestionInputEl) {
+  suggestionsFormEl.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const raw = suggestionInputEl.value;
+    const sanitized = typeof raw === 'string' ? raw.replace(/\s+/g, ' ').trim() : '';
+    if (!sanitized) {
+      suggestionInputEl.value = '';
+      suggestionInputEl.focus({ preventScroll: true });
+      return;
+    }
+    if (!Array.isArray(state.suggestions)) {
+      state.suggestions = [];
+    }
+    const entry = {
+      id: `s-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+      mode: suggestionMode === 'PLAYER' ? 'PLAYER' : 'ALL',
+      text: sanitized,
+    };
+    state.suggestions.push(entry);
+    resetCopySuggestionsButton();
+    renderSuggestionsList();
+    suggestionInputEl.value = '';
+    suggestionInputEl.focus({ preventScroll: true });
+  });
+}
+
+if (suggestionModeButtons && suggestionModeButtons.length) {
+  suggestionModeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.suggestionMode === 'PLAYER' ? 'PLAYER' : 'ALL';
+      setSuggestionMode(mode);
+    });
+  });
+}
+
+setSuggestionMode(suggestionMode);
 
 if (dislikeBtn) {
   dislikeBtn.addEventListener('click', () => {
@@ -2809,7 +3377,10 @@ if (flaggedOverlayEl) {
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
-    if (flaggedOverlayEl && flaggedOverlayEl.classList.contains('open')) {
+    if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+      closeSuggestionsOverlay();
+      event.preventDefault();
+    } else if (flaggedOverlayEl && flaggedOverlayEl.classList.contains('open')) {
       closeFlaggedOverlay();
       event.preventDefault();
     } else if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
@@ -2842,6 +3413,7 @@ document.getElementById('clearPlayersBtn').addEventListener('click', clearPlayer
 renderSections();
 refreshPlayers();
 updateFlaggedIndicators();
+updateSuggestionsIndicators();
 
 // ---- Voice Select ----
 function populateVoiceList() {
