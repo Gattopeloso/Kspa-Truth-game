@@ -2139,7 +2139,7 @@ function removePlayerByName(name) {
   if (state.current && Array.isArray(state.current.assignees)) {
     state.current.assignees = state.current.assignees.filter((p) => p !== name);
   }
-  refreshPlayers(`Removed ${name} from the roster.`);
+  refreshPlayers();
 }
 
 function clearPlayers() {
@@ -2516,13 +2516,11 @@ function updatePlayers() {
     }
   });
   if (added.length && skipped.length) {
-    refreshPlayers(
-      `Added to the roster: ${added.join(', ')} · Already in: ${[...new Set(skipped)].join(', ')}`
-    );
-  } else if (added.length) {
-    refreshPlayers(`Added to the roster: ${added.join(', ')}`);
-  } else {
+    refreshPlayers(`Already in the roster: ${[...new Set(skipped)].join(', ')}`);
+  } else if (!added.length) {
     refreshPlayers('Those names are already in the roster.');
+  } else {
+    refreshPlayers();
   }
 }
 // ---- Init ----
