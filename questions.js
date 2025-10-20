@@ -449,7 +449,22 @@ window.QUESTION_DATA = [
       "{PLAYER}, what would you tell someone who thinks nudity always has to be sexual?",
       "{PLAYER}, what part of social nudity makes you laugh the most?",
       "{PLAYER}, what kind of place would make a great first nude experience for beginners?",
-      "{ALL}, what makes a nude group activity memorable without being awkward?"
+      "{ALL}, what makes a nude group activity memorable without being awkward?",
+      "{PLAYER}, what’s the biggest mindset shift you noticed after becoming a nudist?",
+      "{PLAYER}, what part of social nudity took the longest for you to feel natural about?",
+      "{PLAYER}, how do you recognize when someone’s not genuinely comfortable being nude?",
+      "{PLAYER}, would you describe yourself as a quiet observer or a social participant in nude settings?",
+      "{PLAYER}, how has nudism changed the way you read other people’s body language?",
+      "{PLAYER}, what’s something you used to misunderstand about nudists before becoming one?",
+      "{PLAYER}, what makes you trust that a nudist environment is truly respectful?",
+      "{PLAYER}, how do you personally tell the difference between genuine comfort and performative confidence?",
+      "{PLAYER}, what moment made you realize that nudity could feel peaceful rather than exciting?",
+      "{PLAYER}, what kind of interaction makes you feel connected without crossing personal boundaries?",
+      "{PLAYER}, how do you react when someone treats nudity as a flirt rather than a lifestyle?",
+      "{PLAYER}, what detail helps you tell if someone is exploring nudism with honest curiosity or hidden motives?",
+      "{PLAYER}, how has being a nudist changed the way you perceive attraction and intimacy?",
+      "{PLAYER}, what makes a nudist community feel emotionally safe for you?",
+      "{PLAYER}, how do you balance openness with privacy when you’re around other nudists?"
     ]
   },
   {
@@ -488,7 +503,6 @@ window.QUESTION_DATA = [
       "{PLAYER}, what is the go-to late-night food in your city?",
       "{PLAYER}, what snack do you bring to the beach or park?",
       "{PLAYER}, what funny translation fail have you seen online or in real life?",
-      "{PLAYER}, what word from your language has no good English translation?",
       "{PLAYER}, how do people handle heat or cold where you live (siesta, sauna, layers)?",
       "{PLAYER}, what public rule is strict where you are (queues, noise, recycling)?",
       "{ALL}, what is one tiny habit from your culture you are proud of?",
@@ -506,7 +520,6 @@ window.QUESTION_DATA = [
       "{PLAYER}, what moment from a movie or show always gives you chills?",
       "{PLAYER}, what kind of theater or live performance do you enjoy the most?",
       "{PLAYER}, what author, musician, or artist represents your country best?",
-      "{PLAYER}, what foreign word do you wish existed in your language?",
       "{PLAYER}, what kind of film genre feels most “you” — drama, comedy, thriller, or romance?",
       "{PLAYER}, what cultural custom surprised you the most when you learned about it?",
       "{PLAYER}, what city or country’s style (fashion, art, design) inspires you the most?",
@@ -579,8 +592,6 @@ window.QUESTION_DATA = [
       "{PLAYER}: Sauna or shower?",
       "{PLAYER}: Sun on skin or breeze on skin?",
       "{PLAYER}: Swim nude or sunbathe nude?",
-      "{PLAYER}: Hug nude or sit nude?",
-      "{PLAYER}: Towel or no towel?",
       "{PLAYER}: Daylight nude or night nude?",
       "{PLAYER}: First nude step: fast or slow?",
       "{PLAYER}: Beach or forest nudity?",
@@ -593,7 +604,6 @@ window.QUESTION_DATA = [
       "{PLAYER}: Early dinner or late dinner?",
       "{PLAYER}: Learn slang or learn food?",
       "{PLAYER}: Tradition or modern?",
-      "{PLAYER}: Public hug or private smile?",
       "{PLAYER}: Share or keep secret?"
     ]
   },
