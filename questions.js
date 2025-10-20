@@ -842,7 +842,7 @@ window.QUESTION_DATA = [
     "{PLAYER}: Walk through a clothed event naked or through a nudist event fully dressed?",
     "{PLAYER}: Be stuck in an elevator with your crush or your boss?",
     "{PLAYER}: Have everyone hear your thoughts for one hour or see your internet history forever?",
-    "{PLAYER}: Spend a week without clothes or a month without your phone?",
+    "{PLAYER}: Spend a week without clothes or a without your phone?",
     "{PLAYER}: Always be slightly sunburned or constantly covered in glitter?",
     "{PLAYER}: Be known for your boldness or your mystery?",
     "{PLAYER}: Have a personal chef or a personal masseur?",
