@@ -1,0 +1,3789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Truth or Dare — Group (18+)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.player-name {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+:root {
+  --bg-top: #050816;
+  --bg-bottom: #131b2c;
+  --fg: #e2e8f0;
+  --muted: rgba(148, 163, 184, 0.78);
+  --accent: linear-gradient(135deg, #6366f1, #22d3ee);
+  --accent-solid: #22d3ee;
+  --accent2: linear-gradient(135deg, #f97316, #ef4444);
+  --accent2-solid: #ef4444;
+  --accent3: linear-gradient(135deg, #facc15, #f97316);
+  --card: rgba(15, 23, 42, 0.86);
+  --card-border: rgba(148, 163, 184, 0.18);
+  --shadow: 0 30px 80px rgba(5, 6, 25, 0.75);
+  --surface: rgba(30, 41, 59, 0.85);
+  --surface-muted: rgba(51, 65, 85, 0.6);
+  --menu-hint-space: 0px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.35), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.28), transparent 45%),
+    linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+  color: var(--fg);
+  font-family: "Fredoka", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans",
+    "Apple Color Emoji", "Segoe UI Emoji";
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 420px;
+  height: 420px;
+  border-radius: 999px;
+  filter: blur(0);
+  opacity: 0.32;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body::before {
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.35), rgba(59, 130, 246, 0));
+  top: -120px;
+  left: -140px;
+}
+
+body::after {
+  background: radial-gradient(circle at center, rgba(190, 24, 93, 0.35), rgba(190, 24, 93, 0));
+  bottom: -160px;
+  right: -140px;
+}
+
+header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1.75rem clamp(1.5rem, 4vw, 4rem) 0;
+}
+
+.topbar-buttons {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.menu-hint {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 0.35rem;
+  color: rgba(226, 232, 240, 0.78);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  max-width: min(640px, 100%);
+  min-height: var(--menu-hint-space, 0px);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.menu-hint.is-visible {
+  opacity: 1;
+}
+
+.menu-toggle {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.65);
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.menu-toggle:hover,
+.menu-toggle:focus-visible {
+  background: rgba(59, 130, 246, 0.32);
+  border-color: rgba(96, 165, 250, 0.5);
+  transform: translateY(-1px);
+}
+
+.menu-toggle[aria-expanded="true"] {
+  background: rgba(59, 130, 246, 0.45);
+  border-color: rgba(96, 165, 250, 0.7);
+}
+
+.overlay-menu {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 3rem);
+  background: rgba(2, 6, 23, 0.68);
+  backdrop-filter: blur(14px);
+  z-index: 4;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.24s ease, visibility 0.24s ease;
+  overflow-y: auto;
+}
+
+.overlay-menu.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.overlay-menu .control-panel {
+  transform: translateY(12px);
+  opacity: 0;
+  transition: transform 0.26s ease, opacity 0.26s ease;
+}
+
+.overlay-menu.open .control-panel {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.control-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 2.2rem 1.75rem 1.75rem;
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.65);
+  backdrop-filter: blur(12px);
+  position: relative;
+  width: min(640px, 100%);
+}
+
+.overlay-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  border: none;
+  background: rgba(15, 23, 42, 0.55);
+  color: var(--fg);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.overlay-close:hover,
+.overlay-close:focus-visible {
+  background: rgba(59, 130, 246, 0.45);
+  transform: translateY(-1px);
+}
+
+.player-manager {
+  flex: 1 1 280px;
+  min-width: min(320px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.overlay-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin: 0 0 0.75rem;
+  letter-spacing: 0.3px;
+  flex-basis: 100%;
+}
+
+.categories-panel {
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: stretch;
+  width: min(760px, 100%);
+  gap: 1.25rem;
+  padding: 2.3rem 2rem 2.25rem;
+  max-height: min(78vh, 640px);
+  overflow-y: auto;
+}
+
+.rewind-panel {
+  width: min(520px, 100%);
+  gap: 1.5rem;
+  padding: clamp(2rem, 4vw, 2.75rem);
+}
+
+.rewind-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  width: 100%;
+}
+
+.rewind-meta {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  color: rgba(226, 232, 240, 0.82);
+}
+
+.rewind-meta strong {
+  color: #fff;
+  margin-right: 0.3rem;
+}
+
+.rewind-players {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.rewind-players span {
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.flagged-panel {
+  width: min(680px, 100%);
+  gap: 1.25rem;
+  padding: clamp(2rem, 4vw, 2.75rem) clamp(1.8rem, 3.2vw, 2.4rem);
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  max-height: min(82vh, 680px);
+  overflow: hidden;
+}
+
+.flagged-help {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  line-height: 1.5;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.flagged-help strong {
+  color: #f87171;
+}
+
+.flagged-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+  max-height: min(60vh, 460px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.35rem;
+}
+
+.flagged-entry {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 22px;
+  padding: clamp(1rem, 2.8vw, 1.4rem);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.flagged-entry-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.flagged-entry-header-group {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.flagged-index {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.9), rgba(59, 130, 246, 0.9));
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.05rem;
+  height: 2.05rem;
+  border-radius: 999px;
+}
+
+.flagged-section {
+  font-size: clamp(0.95rem, 1.7vw, 1.2rem);
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.flagged-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.flagged-label {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: rgba(226, 232, 240, 0.68);
+}
+
+.flagged-question {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  line-height: 1.6;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 18px;
+  padding: clamp(0.8rem, 2.6vw, 1.15rem);
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #f8fafc;
+  font-family: "Fredoka", system-ui, -apple-system, Segoe UI, sans-serif;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.16);
+}
+
+.flagged-empty {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1rem, 1.8vw, 1.35rem);
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.flagged-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.flagged-remove {
+  border: none;
+  background: rgba(148, 163, 184, 0.16);
+  color: rgba(248, 250, 252, 0.88);
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.35rem 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.flagged-remove:hover,
+.flagged-remove:focus-visible {
+  background: rgba(248, 113, 113, 0.85);
+  color: #0f172a;
+}
+
+.flagged-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.flagged-remove:focus-visible {
+  outline: 2px solid rgba(248, 250, 252, 0.85);
+  outline-offset: 2px;
+}
+
+.suggestions-panel {
+  width: min(680px, 100%);
+  gap: 1.4rem;
+  padding: clamp(2rem, 4vw, 2.75rem) clamp(1.8rem, 3.2vw, 2.4rem);
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  max-height: min(82vh, 680px);
+  overflow: hidden;
+}
+
+.suggestions-help {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  line-height: 1.5;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.suggestions-help strong {
+  color: #22d3ee;
+}
+
+.suggestions-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.suggestion-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
+}
+
+.suggestion-mode-btn {
+  border: none;
+  background: transparent;
+  color: rgba(226, 232, 240, 0.72);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.45rem 1.15rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.suggestion-mode-btn[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.9), rgba(99, 102, 241, 0.9));
+  color: #0f172a;
+  box-shadow: 0 10px 26px rgba(99, 102, 241, 0.45);
+  transform: translateY(-1px);
+}
+
+.suggestion-mode-btn:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+}
+
+.suggestions-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.86);
+}
+
+#suggestionInput {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  color: var(--fg);
+  padding: 0.9rem 1rem;
+  min-height: 130px;
+  font-size: 1rem;
+  resize: vertical;
+  transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#suggestionInput::placeholder {
+  color: rgba(226, 232, 240, 0.6);
+}
+
+#suggestionInput:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  transform: translateY(-1px);
+}
+
+.suggestion-submit {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #22d3ee, #6366f1);
+  color: #0f172a;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.7rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.suggestion-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.45);
+}
+
+.suggestion-submit:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.suggestions-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.22);
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 120px;
+  max-height: min(52vh, 360px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.35rem;
+}
+
+.suggestion-entry {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 20px;
+  padding: clamp(0.85rem, 2.6vw, 1.25rem);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.suggestion-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.suggestion-entry-mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(148, 163, 184, 0.18);
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.suggestion-entry-mode[data-mode="ALL"] {
+  background: rgba(34, 211, 238, 0.2);
+  color: #22d3ee;
+}
+
+.suggestion-entry-mode[data-mode="PLAYER"] {
+  background: rgba(244, 114, 182, 0.2);
+  color: #f472b6;
+}
+
+.suggestion-text {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.55;
+  color: #e2e8f0;
+  word-break: break-word;
+}
+
+.suggestions-empty {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.7);
+  font-style: italic;
+}
+
+.suggestions-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.suggestion-remove {
+  border: 1px solid rgba(248, 113, 113, 0.65);
+  background: transparent;
+  color: #fca5a5;
+  padding: 0.3rem 0.95rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.suggestion-remove:hover,
+.suggestion-remove:focus-visible {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fee2e2;
+  border-color: rgba(252, 165, 165, 0.95);
+  outline: none;
+}
+
+.suggestion-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.suggestions-actions .ghost-btn {
+  align-self: flex-end;
+}
+
+.rewind-question {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.45rem);
+  line-height: 1.55;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
+}
+
+.rewind-empty {
+  margin: 0;
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
+  text-align: center;
+  color: rgba(226, 232, 240, 0.82);
+}
+
+.player-input {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 auto;
+}
+
+.setup-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-size: 1.05rem;
+  padding: 0.75rem 1.4rem;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.65);
+}
+
+.btn:hover::after {
+  opacity: 1;
+}
+
+#startBtn {
+  background: var(--accent);
+}
+
+.setup-actions #startBtn {
+  flex: 0 0 auto;
+}
+
+.setup-actions .player-input {
+  flex: 1 1 240px;
+}
+
+#playersInput {
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: var(--surface-muted);
+  color: var(--fg);
+  width: 100%;
+  font-size: 1rem;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#playersInput::placeholder {
+  color: rgba(226, 232, 240, 0.6);
+}
+
+#playersInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+}
+
+.ghost-btn {
+  background: transparent;
+  border: none;
+  color: rgba(226, 232, 240, 0.78);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  align-self: flex-start;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.ghost-btn:hover {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: underline;
+}
+
+.ghost-btn:disabled,
+.ghost-btn:disabled:hover {
+  color: rgba(148, 163, 184, 0.5);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+#playersList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.player-chip {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  background: rgba(15, 23, 42, 0.75);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.55);
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--fg);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.player-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(8, 11, 38, 0.75);
+  background: rgba(30, 64, 175, 0.9);
+}
+
+.player-chip span.remove {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+#voiceSelect {
+  padding: 0.6rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--fg);
+  min-width: 180px;
+}
+
+#playersMessage {
+  display: block;
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.76);
+  padding: 0 0.35rem;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 clamp(1.5rem, 4vw, 4.5rem) clamp(2.25rem, 6vw, 5.5rem);
+  position: relative;
+  z-index: 1;
+}
+
+.stage {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  flex-wrap: wrap;
+}
+
+.stage::before,
+.stage::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0);
+  opacity: 0.25;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.stage::before {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.35), rgba(14, 165, 233, 0));
+  top: -110px;
+  left: -120px;
+}
+
+.stage::after {
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.35), rgba(244, 63, 94, 0));
+  bottom: -80px;
+  right: -90px;
+}
+
+.game-card {
+  flex: 1 1 100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background: var(--card);
+  border-radius: 32px;
+  padding: clamp(1.8rem, 4vw, 3.5rem);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.deck-counter {
+  align-self: center;
+  background: rgba(148, 163, 184, 0.14);
+  color: rgba(248, 250, 252, 0.92);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.22);
+  white-space: nowrap;
+}
+
+.deck-counter .count-number {
+  font-variant-numeric: tabular-nums;
+  color: #fbbf24;
+}
+
+.topbar-buttons .deck-counter {
+  flex: 0 0 auto;
+}
+
+.badge-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cycle-pill {
+  background: rgba(148, 163, 184, 0.18);
+  color: #e0f2fe;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  min-height: 2.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.3;
+  flex: 1;
+}
+
+#category {
+  font-size: clamp(1.55rem, 2.6vw, 2.4rem);
+  color: rgba(248, 250, 252, 0.92);
+  font-weight: 600;
+  letter-spacing: 0.24px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  padding: 0.4rem 1.35rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.22);
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  margin: 0 auto;
+}
+
+#question {
+  font-size: clamp(1.5rem, 3vw, 3.8rem);
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: 0.22px;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  min-height: clamp(220px, 34vh, 440px);
+  padding: clamp(0.75rem, 2.4vw, 1.6rem) clamp(1.2rem, 3.8vw, 2.8rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(0.35rem, 1vw, 0.65rem);
+  align-content: center;
+  align-self: stretch;
+  flex: 1 1 auto;
+  height: 100%;
+  text-wrap: balance;
+}
+
+.question-word {
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.question-word-inner {
+  display: inline-block;
+  will-change: transform;
+  transform: translateY(0%);
+}
+
+.action-cluster {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(0.75rem, 2vw, 1.35rem);
+  margin-top: clamp(1.1rem, 2.4vw, 1.8rem);
+  padding-top: clamp(1rem, 2vw, 1.6rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.action-cluster[hidden] {
+  display: none;
+}
+
+.btn.action-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.95rem, 2.4vw, 1.3rem) clamp(2.4rem, 4.6vw, 3.4rem);
+  border: none;
+  border-radius: 28px;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0f172a;
+  background-size: 200% 200%;
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.5), inset 0 0 6px rgba(255, 255, 255, 0.08);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background-position 0.4s ease;
+  cursor: pointer;
+  min-width: clamp(170px, 22vw, 260px);
+}
+
+.btn.action-btn:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.55);
+  outline-offset: 3px;
+}
+
+.btn.action-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 36px rgba(99, 102, 241, 0.55), 0 0 12px rgba(99, 102, 241, 0.6);
+  background-position: 100% 0;
+}
+
+.btn.action-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+}
+
+#nextBtn {
+  background: linear-gradient(135deg, #22d3ee, #6366f1);
+  color: #ffffff;
+  font-size: clamp(1.05rem, 2.4vw, 1.55rem);
+  letter-spacing: 0.18em;
+  min-width: clamp(120px, 26vw, 120px);
+  min-height: clamp(50px, 13vw, 50px);
+}
+
+#skipBtn {
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: #ffffff;
+  letter-spacing: 0.16em;
+  min-width: clamp(100px, 24vw, 100px);
+  min-height: clamp(40px, 12vw, 40px);
+}
+
+#speakBtn {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: #ffffff;
+  padding: 0;
+  min-width: clamp(40px, 8vw, 40px);
+  width: clamp(50px, 8vw, 50px);
+  height: clamp(50px, 8vw, 50px);
+  letter-spacing: 0;
+  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+}
+
+#stopSpeakBtn {
+  background: linear-gradient(135deg, #a5b4fc, #c7d2fe);
+  color: #0f172a;
+  padding: 0;
+  min-width: clamp(40px, 8vw, 40px);
+  width: clamp(50px, 8vw, 50px);
+  height: clamp(50px, 8vw, 50px);
+  letter-spacing: 0;
+  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+}
+
+#dislikeBtn {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #ffffff;
+  padding: 0;
+  min-width: clamp(40px, 8vw, 40px);
+  width: clamp(50px, 8vw, 50px);
+  height: clamp(50px, 8vw, 50px);
+  letter-spacing: 0;
+  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+  position: relative;
+}
+
+#dislikeBtn.is-flagged {
+  animation: flaggedPulse 0.48s ease;
+}
+
+#dislikeBtn::after,
+#flaggedToggle::after,
+#suggestionsToggle::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.95), rgba(248, 113, 113, 0.95));
+  color: #0f172a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(15, 23, 42, 0.5);
+}
+
+#dislikeBtn[data-count=""]::after,
+#flaggedToggle[data-count=""]::after,
+#suggestionsToggle[data-count=""]::after {
+  display: none;
+}
+
+#flaggedToggle,
+#suggestionsToggle {
+  position: relative;
+}
+
+@keyframes flaggedPulse {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#sections {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.chip {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  color: var(--fg);
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 12px 26px rgba(8, 11, 38, 0.55);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.8);
+}
+
+.chip[data-enabled="true"] {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.9), rgba(37, 99, 235, 0.9));
+  color: #fff;
+}
+
+.chip[data-enabled="false"] {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.9), rgba(248, 113, 113, 0.9));
+  color: #fff;
+}
+
+.category-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.5rem 0 0.5rem;
+}
+
+.category-actions .ghost-btn {
+  align-self: flex-end;
+  padding: 0.4rem 0.95rem;
+}
+
+.audio-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.auto-speak-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#voiceWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+#toggleVoice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(34, 211, 238, 0.2);
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+#toggleVoice:hover {
+  transform: rotate(-8deg) scale(1.05);
+}
+
+.auto-speak-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  color: rgba(226, 232, 240, 0.86);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  width: fit-content;
+}
+
+.auto-speak-toggle.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.auto-speak-toggle:hover {
+  border-color: rgba(148, 163, 184, 0.45);
+  background: rgba(30, 41, 59, 0.75);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.45);
+}
+
+.auto-speak-toggle.is-disabled:hover {
+  border-color: rgba(148, 163, 184, 0.26);
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow: none;
+}
+
+.auto-speak-toggle.is-active {
+  border-color: rgba(148, 163, 184, 0.55);
+  background: rgba(59, 130, 246, 0.28);
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.25);
+}
+
+.auto-speak-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auto-speak-toggle .switch {
+  position: relative;
+  width: 54px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.35);
+  transition: background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.auto-speak-toggle .switch::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f8fafc;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.55);
+  transition: transform 0.22s ease;
+}
+
+.auto-speak-toggle input:focus-visible + .switch {
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.45);
+}
+
+.auto-speak-toggle input:checked + .switch {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.auto-speak-toggle input:checked + .switch::after {
+  transform: translateX(26px);
+}
+
+.auto-speak-toggle input:disabled + .switch {
+  background: rgba(148, 163, 184, 0.25);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.2);
+}
+
+.auto-speak-toggle input:disabled + .switch::after {
+  background: rgba(226, 232, 240, 0.65);
+  box-shadow: none;
+}
+
+.auto-speak-toggle .toggle-text {
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+  color: rgba(226, 232, 240, 0.9);
+}
+
+.auto-speak-toggle input:checked ~ .toggle-text {
+  color: #ffffff;
+}
+
+.tts-support-warning {
+  color: #f87171;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.speaker-support-warning {
+  width: 100%;
+  text-align: center;
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+}
+
+.speaker-support-warning[hidden] {
+  display: none !important;
+}
+
+.count {
+  display: inline-block;
+  margin-left: 0.25rem;
+  font-size: 0.85rem;
+  color: rgba(148, 163, 184, 0.7);
+}
+
+
+.small {
+  font-size: 0.85rem;
+  color: rgba(148, 163, 184, 0.68);
+}
+
+@media (max-width: 720px) {
+  .menu-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .control-panel {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding: 2rem 1.35rem 1.6rem;
+  }
+
+  .player-manager {
+    width: 100%;
+  }
+
+  .player-input {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #playersInput {
+    width: 100%;
+  }
+
+  #voiceSelect {
+    width: 100%;
+  }
+
+  #playersList {
+    justify-content: flex-start;
+  }
+
+  .badge-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cycle-pill {
+    width: 100%;
+  }
+
+  .auto-speak-toggle {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .stage {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .action-cluster {
+    justify-content: center;
+    gap: clamp(0.75rem, 3vw, 1.2rem);
+    padding-top: 1rem;
+  }
+
+  .btn.action-btn {
+    flex: 1 1 calc(50% - clamp(0.75rem, 3vw, 1.1rem));
+    min-width: calc(50% - clamp(0.75rem, 3vw, 1.1rem));
+    max-width: calc(50% - clamp(0.75rem, 3vw, 1.1rem));
+  }
+
+  #speakBtn,
+  #stopSpeakBtn {
+    width: 100%;
+    height: clamp(64px, 18vw, 88px);
+    font-size: clamp(1.05rem, 4vw, 1.45rem);
+  }
+}
+
+@media (min-width: 1080px) {
+  .stage {
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+
+  .game-card {
+    flex: 1 1 100%;
+  }
+}
+
+@media (min-width: 1440px) {
+  main {
+    padding: clamp(3rem, 6vw, 6.5rem);
+  }
+
+  .stage {
+    max-width: 100%;
+    gap: clamp(2.5rem, 5vw, 5rem);
+  }
+}
+</style>
+</head>
+<body>
+  <header>
+    <div class="topbar-buttons">
+      <button
+        id="setupToggle"
+        class="menu-toggle"
+        type="button"
+        aria-controls="setupOverlay"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        data-hint="Control Panel: Set up your game, Add or Remove Players (even during the game if someone joins or leave). Toggle the TTS to automatically read the question (Requires Google Chrome browser)"
+      >
+        Control Panel
+      </button>
+      <button
+        id="categoriesToggle"
+        class="menu-toggle"
+        type="button"
+        aria-controls="categoriesOverlay"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        data-hint="Categories: Select or Deselect the categories you wanna play with. Works even during a game in progress."
+      >
+        Categories
+      </button>
+      <button
+        id="rewindToggle"
+        class="menu-toggle"
+        type="button"
+        aria-controls="rewindOverlay"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        data-hint="Rewind: Show the last question asked, in case your fat fingers clicked NEXT by mistake."
+      >
+        Rewind
+      </button>
+      <button
+        id="suggestionsToggle"
+        class="menu-toggle"
+        type="button"
+        aria-controls="playerSuggestionsOverlay"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        data-hint="Player Suggestions: Collect custom prompts from your players, copy them into a .txt file, and DM Gatto on Discord."
+      >
+        Player Suggestions
+      </button>
+      <button
+        id="flaggedToggle"
+        class="menu-toggle"
+        type="button"
+        aria-controls="flaggedOverlay"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-label="Open flagged questions list"
+        data-hint="Flagged: Show the list of questions you flagged for deletion (follow the instruction inside)"
+      >
+        👎 Flagged
+      </button>
+      <div
+        id="remainingQuestionsCounter"
+        class="deck-counter"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        Remaining questions: <span class="count-number">0</span>
+      </div>
+    </div>
+    <div id="menuHint" class="menu-hint" aria-live="polite" aria-hidden="true"></div>
+    <span id="playersMessage" aria-live="polite"></span>
+  </header>
+
+  <main>
+    <div class="stage">
+      <div class="game-card">
+        <div class="badge-row">
+          <div id="cycle_players" class="cycle-pill"></div>
+        </div>
+        <div id="category">✨ K-Spa Truth Game ✨</div>
+        <div id="question">Open the Control Panel button above, add your players, and press START to begin the fun.</div>
+        <div class="action-cluster" id="actionCluster" hidden aria-label="Question controls">
+          <button id="speakBtn" class="btn action-btn" type="button" aria-label="Play question audio">🔈</button>
+          <button id="stopSpeakBtn" class="btn action-btn" type="button" aria-label="Stop question audio">🔇</button>
+          <button id="skipBtn" class="btn action-btn" type="button">SKIP</button>
+          <button
+            id="dislikeBtn"
+            class="btn action-btn"
+            type="button"
+            aria-label="Flag this question as unsuitable"
+            title="Flag this question"
+          >
+            👎
+          </button>
+          <button id="nextBtn" class="btn action-btn" type="button">NEXT</button>
+        </div>
+        <p
+          id="speakerSupportMessage"
+          class="tts-support-warning speaker-support-warning"
+          role="alert"
+          aria-live="polite"
+          hidden
+        >
+          Works only with Chrome!
+        </p>
+      </div>
+    </div>
+    <div
+      id="setupOverlay"
+      class="overlay-menu"
+      aria-hidden="true"
+    >
+      <div
+        class="control-panel"
+        id="controlPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="setupTitle"
+        tabindex="-1"
+      >
+        <button id="closeSetupBtn" class="overlay-close" type="button" aria-label="Close control panel">✕</button>
+        <h2 class="overlay-title" id="setupTitle">Control Panel</h2>
+        <div class="player-manager">
+          <div class="setup-actions">
+            <button id="startBtn" class="btn">START</button>
+            <div class="player-input">
+              <input
+                id="playersInput"
+                type="text"
+                placeholder="Add player names (press Enter or use commas)"
+                aria-label="Add player names"
+              />
+            </div>
+          </div>
+          <div id="playersList" aria-live="polite" role="list"></div>
+          <button id="clearPlayersBtn" class="ghost-btn" type="button">Clear all players</button>
+        </div>
+        <div class="audio-settings">
+          <div id="voiceWrapper">
+            <span id="toggleVoice">🎙️</span>
+            <select id="voiceSelect" style="display:none;"></select>
+          </div>
+          <div class="auto-speak-row">
+            <label class="auto-speak-toggle">
+              <input type="checkbox" id="autoSpeakToggle" />
+              <span class="switch" aria-hidden="true"></span>
+              <span class="toggle-text">Auto read questions</span>
+            </label>
+            <span
+              id="autoSpeakSupport"
+              class="tts-support-warning"
+              role="alert"
+              aria-live="polite"
+              hidden
+            >Browser not supported. This feature works only on Chrome.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="rewindOverlay"
+      class="overlay-menu"
+      aria-hidden="true"
+    >
+      <div
+        class="control-panel rewind-panel"
+        id="rewindPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rewindTitle"
+        tabindex="-1"
+      >
+        <button id="closeRewindBtn" class="overlay-close" type="button" aria-label="Close rewind overlay">✕</button>
+        <h2 id="rewindTitle" class="overlay-title">Last Round Recap</h2>
+        <div id="rewindContent" class="rewind-content" aria-live="polite"></div>
+      </div>
+    </div>
+    <div
+      id="flaggedOverlay"
+      class="overlay-menu"
+      aria-hidden="true"
+    >
+      <div
+        class="control-panel flagged-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="flaggedTitle"
+        tabindex="-1"
+      >
+        <button id="closeFlaggedBtn" class="overlay-close" type="button" aria-label="Close flagged questions panel">✕</button>
+        <h2 class="overlay-title" id="flaggedTitle">Flagged questions</h2>
+        <p class="flagged-help">
+          Copy the list below into a <strong>.txt</strong> file and send it to <strong>Gatto</strong> with a direct message on Discord so the questions can be removed from the pack.
+        </p>
+        <div id="flaggedContent" class="flagged-content" aria-live="polite"></div>
+        <div class="flagged-actions">
+          <button id="copyFlaggedBtn" class="ghost-btn" type="button">Copy list</button>
+        </div>
+      </div>
+    </div>
+    <div
+      id="playerSuggestionsOverlay"
+      class="overlay-menu"
+      aria-hidden="true"
+    >
+      <div
+        class="control-panel suggestions-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="suggestionsTitle"
+        tabindex="-1"
+      >
+        <button
+          id="closeSuggestionsBtn"
+          class="overlay-close"
+          type="button"
+          aria-label="Close player suggestions panel"
+        >✕</button>
+        <h2 class="overlay-title" id="suggestionsTitle">Player suggestions</h2>
+        <p class="suggestions-help">
+          Invite your crew to pitch new prompts. Copy the list into a <strong>.txt</strong> file and DM
+          <strong>Gatto</strong> on Discord.
+        </p>
+        <form id="suggestionsForm" class="suggestions-form">
+          <div class="suggestion-mode" role="group" aria-label="Suggestion template">
+            <button
+              type="button"
+              class="suggestion-mode-btn"
+              data-suggestion-mode="ALL"
+              aria-pressed="true"
+            >
+              For Everyone
+            </button>
+            <button
+              type="button"
+              class="suggestion-mode-btn"
+              data-suggestion-mode="PLAYER"
+              aria-pressed="false"
+            >
+              For Player
+            </button>
+          </div>
+          <label class="suggestions-label" for="suggestionInput">Custom question</label>
+          <textarea
+            id="suggestionInput"
+            name="suggestion"
+            placeholder="Type the custom question players suggested…"
+            rows="4"
+            required
+          ></textarea>
+          <button type="submit" class="suggestion-submit">Add suggestion</button>
+        </form>
+        <div class="suggestions-divider" aria-hidden="true"></div>
+        <div id="suggestionsList" class="suggestions-list" aria-live="polite"></div>
+        <div class="suggestions-actions">
+          <button id="copySuggestionsBtn" class="ghost-btn" type="button">Copy list</button>
+        </div>
+      </div>
+    </div>
+    <div
+      id="categoriesOverlay"
+      class="overlay-menu"
+      aria-hidden="true"
+    >
+      <div
+        class="control-panel categories-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="categoriesTitle"
+        tabindex="-1"
+      >
+        <button id="closeCategoriesBtn" class="overlay-close" type="button" aria-label="Close categories panel">✕</button>
+        <h2 class="overlay-title" id="categoriesTitle">Categories</h2>
+        <div class="category-actions">
+          <button id="toggleAllCategoriesBtn" class="ghost-btn" type="button">Disable all</button>
+        </div>
+        <div id="sections" role="group" aria-label="Question categories"></div>
+      </div>
+    </div>
+  </main>
+
+<script src="./questions.js"></script>
+<script type="module">
+
+import anime from 'https://esm.sh/animejs@3.2.1';
+
+const DATA = Array.isArray(window.QUESTION_DATA) ? window.QUESTION_DATA : [];
+
+if (!DATA.length) {
+  console.error('Question data failed to load: window.QUESTION_DATA is empty or not an array.');
+}
+
+const questionEl = document.getElementById('question');
+const dislikeBtn = document.getElementById('dislikeBtn');
+let questionWordTargets = [];
+let questionAnimationQueue = Promise.resolve();
+let currentQuestionPlainText = questionEl ? questionEl.textContent.replace(/\s+/g, ' ').trim() : '';
+let copyFlaggedFeedbackTimeout = null;
+let copySuggestionsFeedbackTimeout = null;
+let suggestionMode = 'ALL';
+
+function wrapQuestionWords(container, startOffset = '100%') {
+  if (!container) return [];
+  const nodes = Array.from(container.childNodes);
+  const frag = document.createDocumentFragment();
+  const targets = [];
+
+  nodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const parts = node.textContent?.split(/(\s+)/) ?? [];
+      parts.forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) {
+          frag.appendChild(document.createTextNode(part));
+        } else {
+          const outer = document.createElement('span');
+          outer.className = 'question-word';
+          const inner = document.createElement('span');
+          inner.className = 'question-word-inner';
+          inner.style.transform = `translateY(${startOffset})`;
+          inner.textContent = part;
+          outer.appendChild(inner);
+          frag.appendChild(outer);
+          targets.push(inner);
+        }
+      });
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const outer = document.createElement('span');
+      outer.className = 'question-word';
+      const inner = document.createElement('span');
+      inner.className = 'question-word-inner';
+      inner.style.transform = `translateY(${startOffset})`;
+      inner.appendChild(node);
+      outer.appendChild(inner);
+      frag.appendChild(outer);
+      targets.push(inner);
+    }
+  });
+
+  container.textContent = '';
+  container.appendChild(frag);
+  return targets;
+}
+
+function toPlainQuestionText(html) {
+  if (html == null) return '';
+  if (typeof html !== 'string') {
+    return String(html).replace(/\s+/g, ' ').trim();
+  }
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const text = temp.textContent ?? '';
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+function scaleQuestionText() {
+  if (!questionEl) return;
+
+  const card = questionEl.closest('.game-card');
+  if (!card) return;
+
+  questionEl.style.fontSize = '';
+
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const minSize = rootFontSize * 1;
+  const maxSize = rootFontSize * 3.8;
+
+  const currentComputed = parseFloat(getComputedStyle(questionEl).fontSize);
+  let fontSize = Number.isFinite(currentComputed) ? currentComputed : minSize;
+  fontSize = Math.min(Math.max(fontSize, minSize), maxSize);
+  questionEl.style.fontSize = `${fontSize}px`;
+
+  const cardStyles = getComputedStyle(card);
+  const paddingTop = parseFloat(cardStyles.paddingTop) || 0;
+  const paddingBottom = parseFloat(cardStyles.paddingBottom) || 0;
+  const gapValue = parseFloat(cardStyles.rowGap || cardStyles.gap || 0) || 0;
+
+  const children = Array.from(card.children);
+  const visibleChildren = children.filter((child) => child.getClientRects().length);
+  const totalGaps = gapValue * Math.max(0, visibleChildren.length - 1);
+  const otherHeight = visibleChildren.reduce((sum, child) => {
+    if (child === questionEl) return sum;
+    return sum + child.getBoundingClientRect().height;
+  }, 0);
+
+  const computeAvailableHeight = () => {
+    const cardHeight = card.clientHeight;
+    let space = cardHeight - paddingTop - paddingBottom - totalGaps - otherHeight;
+    if (!Number.isFinite(space) || space <= 0) {
+      space = Math.max(questionEl.clientHeight, 0);
+    }
+    return Math.max(space, 120);
+  };
+
+  let availableHeight = computeAvailableHeight();
+
+  let iterations = 0;
+  let contentHeight = questionEl.scrollHeight;
+  let containerHeight = questionEl.clientHeight;
+  while (
+    (contentHeight > availableHeight + 2 || contentHeight > containerHeight + 2) &&
+    fontSize > minSize &&
+    iterations < 140
+  ) {
+    fontSize -= 1;
+    questionEl.style.fontSize = `${fontSize}px`;
+    availableHeight = computeAvailableHeight();
+    contentHeight = questionEl.scrollHeight;
+    containerHeight = questionEl.clientHeight;
+    iterations += 1;
+  }
+
+  iterations = 0;
+  contentHeight = questionEl.scrollHeight;
+  containerHeight = questionEl.clientHeight;
+  while (
+    contentHeight < availableHeight - 12 &&
+    contentHeight < containerHeight - 12 &&
+    fontSize < maxSize &&
+    iterations < 80
+  ) {
+    fontSize += 1;
+    questionEl.style.fontSize = `${fontSize}px`;
+    availableHeight = computeAvailableHeight();
+    contentHeight = questionEl.scrollHeight;
+    containerHeight = questionEl.clientHeight;
+    if (contentHeight > availableHeight + 2 || contentHeight > containerHeight + 2) {
+      fontSize -= 1;
+      questionEl.style.fontSize = `${fontSize}px`;
+      break;
+    }
+    iterations += 1;
+  }
+}
+
+const scheduleQuestionTextScale = (() => {
+  let rafId = null;
+  return () => {
+    if (!questionEl) return;
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      scaleQuestionText();
+    });
+  };
+})();
+
+if (questionEl) {
+  window.addEventListener('resize', scheduleQuestionTextScale);
+  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
+    document.fonts.ready.then(() => scheduleQuestionTextScale()).catch(() => {});
+  }
+}
+
+if (questionEl) {
+  questionWordTargets = wrapQuestionWords(questionEl, '0%');
+  scheduleQuestionTextScale();
+}
+
+async function animateQuestionSwap(html) {
+  if (!questionEl) return;
+
+  if (questionWordTargets.length) {
+    try {
+      await anime({
+        targets: questionWordTargets,
+        translateY: ['0%', '-110%'],
+        duration: 285,
+        easing: 'cubicBezier(.45,.03,.75,.72)',
+        delay: anime.stagger(45),
+      }).finished;
+    } catch (_) {}
+  }
+
+  questionEl.innerHTML = html ?? '';
+  questionWordTargets = wrapQuestionWords(questionEl, '100%');
+
+  if (questionWordTargets.length) {
+    try {
+      await anime({
+        targets: questionWordTargets,
+        translateY: ['100%', '0%'],
+        duration: 300,
+        easing: 'cubicBezier(.22,1,.36,1)',
+        delay: anime.stagger(45),
+      }).finished;
+    } catch (_) {}
+  }
+
+  scheduleQuestionTextScale();
+}
+
+function setQuestionContent(html) {
+  currentQuestionPlainText = toPlainQuestionText(html);
+  questionAnimationQueue = questionAnimationQueue
+    .catch(() => {})
+    .then(() => animateQuestionSwap(html))
+    .then(() => {
+      if (!state.autoSpeak || !currentQuestionPlainText) {
+        return;
+      }
+      const currentText = state.current?.text;
+      const plainCurrent = currentText ? toPlainQuestionText(currentText) : '';
+      if (plainCurrent && plainCurrent === currentQuestionPlainText) {
+        speakCurrentQuestion();
+      }
+    });
+  return questionAnimationQueue;
+}
+
+/**
+ * GROUP DECK — token-based.
+ * Tokens:
+ *  {PLAYER}  -> randomly chosen acting player
+ *  {PAIR}    -> two randomly chosen players joined with "×" (e.g. "Alex × Hiro")
+ *  {TRIO}    -> three randomly chosen players
+ *  {ALL}     -> literal "everyone" (no assignment)
+ * If no token is present, a single {PLAYER} will be auto-assigned.
+ * 
+ * Categories are horizontal chips at the bottom. Toggle them on/off to include/exclude in the draw.
+ */
+// ---- State ----
+const state = {
+  enabled: new Set(DATA.map((_, i) => i)),
+  used: DATA.map(() => new Set()),
+  players: [],
+  history: [],
+  flagged: new Map(),
+  suggestions: [],
+  current: null,
+  lastPlayer: null,
+  cycle: 1,
+  cycle_passed_players: [],
+  autoSpeak: false,
+};
+
+// Initialize a fresh cycle
+function startCycle() {
+  state.cycle_passed_players = [];
+  updateCycleDisplay();
+}
+
+// Pick a single player who hasn't played in the current cycle yet
+function pickOne(exclude = []) {
+  if (!state.players.length) return null;
+  const all_excluded = Array.from(new Set([...exclude, ...state.cycle_passed_players]));
+  const pool = state.players.filter(p => !all_excluded.includes(p));
+  if (pool.length === 0) {
+    if (coversAllPlayers(exclude)) return null;
+    // everyone has played → reset the cycle
+    state.cycle++;
+    startCycle();
+    return pickOne(exclude);
+  }
+  const selected = pool[Math.floor(Math.random() * pool.length)];
+  if (selected) {
+    state.cycle_passed_players.push(selected);
+    updateCycleDisplay();
+  }
+  return selected;
+}
+
+// Pick multiple players (e.g., for {PAIR}, {TRIO}) without repeats
+function uniqueSample(n, exclude = []) {
+  if (!state.players.length) return [];
+  const all_excluded = Array.from(new Set([...exclude, ...state.cycle_passed_players]));
+  const pool = state.players.filter(p => !all_excluded.includes(p));
+  if (pool.length === 0) {
+    if (coversAllPlayers(exclude)) return [];
+    state.cycle++;
+    startCycle();
+    return uniqueSample(n, exclude);
+  }
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, Math.min(n, shuffled.length));
+  if (selected.length) {
+    state.cycle_passed_players.push(...selected);
+    updateCycleDisplay();
+  }
+  return selected;
+}
+
+function updateCycleDisplay() {
+  const display = document.getElementById("cycle_players");
+  if (!display) return;
+  if (!state.players.length) {
+    display.innerHTML = `🎉 Welcome!<br><span class="small">Add players to queue up the spotlight.</span>`;
+    return;
+  }
+  const remaining = state.players.filter(
+    p => !state.cycle_passed_players.includes(p)
+  );
+  display.innerHTML =
+    remaining.length > 0
+      ? `ROUND ${state.cycle}<br><span class="small">Up next: ${remaining.join(", ")}</span>`
+      : `✅ Everyone played!<br><span class="small">Round ${state.cycle + 1} loading…</span>`;
+}
+
+
+// ---- Helpers ----
+function coversAllPlayers(exclude = []) {
+  if (!state.players.length) return true;
+  const normalizedExclude = new Set(
+    exclude
+      .filter(Boolean)
+      .map(name => name.toLowerCase())
+  );
+  return state.players.every(p => normalizedExclude.has(p.toLowerCase()));
+}
+
+function shuffle(arr){
+  for (let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr; 
+}
+function normalizeName(name) {
+  const trimmed = name.replace(/\s+/g, ' ').trim();
+  if (!trimmed) return '';
+  return trimmed
+    .split(' ')
+    .map(part => {
+      if (!part) return '';
+      const [first, ...rest] = Array.from(part);
+      const capitalizedFirst = first ? first.toLocaleUpperCase() : '';
+      return `${capitalizedFirst}${rest.join('')}`;
+    })
+    .join(' ');
+}
+
+function renderPlayersList() {
+  const list = document.getElementById('playersList');
+  if (!list) return;
+  list.innerHTML = '';
+  state.players.forEach((name) => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'player-chip';
+    chip.dataset.name = name;
+    chip.setAttribute('aria-label', `Remove ${name}`);
+    chip.title = `Remove ${name}`;
+    chip.setAttribute('role', 'listitem');
+    chip.innerHTML = `<span>${name}</span><span class="remove" aria-hidden="true">×</span>`;
+    list.appendChild(chip);
+  });
+}
+
+function refreshPlayers(feedback) {
+  state.cycle_passed_players = state.cycle_passed_players.filter((p) =>
+    state.players.includes(p)
+  );
+  if (state.lastPlayer && !state.players.includes(state.lastPlayer)) {
+    state.lastPlayer = null;
+  }
+  renderPlayersList();
+  const msg = document.getElementById('playersMessage');
+  if (msg) {
+    msg.textContent = feedback || '';
+  }
+  updateCycleDisplay();
+  const skipBtn = document.getElementById('skipBtn');
+  if (skipBtn && !state.players.length) {
+    skipBtn.style.display = 'none';
+  }
+  if (!state.players.length) {
+    const nextBtn = document.getElementById('nextBtn');
+    const speakBtn = document.getElementById('speakBtn');
+    const stopSpeakBtn = document.getElementById('stopSpeakBtn');
+    const actionCluster = document.getElementById('actionCluster');
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (speakBtn) speakBtn.style.display = 'none';
+    if (stopSpeakBtn) stopSpeakBtn.style.display = 'none';
+    if (dislikeBtn) dislikeBtn.style.display = 'none';
+    if (actionCluster) actionCluster.hidden = true;
+    scheduleQuestionTextScale();
+  }
+  const clearBtn = document.getElementById('clearPlayersBtn');
+  if (clearBtn) {
+    clearBtn.style.display = state.players.length ? 'inline-flex' : 'none';
+  }
+}
+
+function removePlayerByName(name) {
+  const index = state.players.findIndex((p) => p === name);
+  if (index === -1) return;
+  state.players.splice(index, 1);
+  if (state.players.length === 0) {
+    state.cycle = 1;
+    startCycle();
+  } else {
+    state.cycle_passed_players = state.cycle_passed_players.filter((p) => p !== name);
+  }
+  if (state.current && Array.isArray(state.current.assignees)) {
+    state.current.assignees = state.current.assignees.filter((p) => p !== name);
+  }
+  refreshPlayers();
+}
+
+function clearPlayers() {
+  if (!state.players.length) {
+    refreshPlayers('The roster is already empty. Add new players to start fresh.');
+    return;
+  }
+  state.players = [];
+  state.cycle = 1;
+  startCycle();
+  if (state.current) {
+    state.current.assignees = [];
+  }
+  refreshPlayers('Roster cleared. Add new players to start fresh.');
+}
+
+function resolveTokens(template) {
+  let assignees = [];
+if (template.includes('{TARGET}')) {
+  const target = pickOne(assignees);
+  const styled = target ? `<span class="player-name">${target}</span>` : 'someone';
+  template = template.replaceAll('{TARGET}', styled);
+  if (target) assignees.push(target);
+}
+
+if (template.includes('{PAIR}')) {
+  const pair = uniqueSample(2, assignees);
+  let styled;
+  if (pair.length === 2) {
+    styled = pair.map(p => `<span class="player-name">${p}</span>`).join(' and ');
+  } else if (pair.length === 1) {
+    styled = `${pair.map(p => `<span class="player-name">${p}</span>`)[0]} and someone`;
+  } else {
+    styled = 'someone and someone else';
+  }
+  template = template.replaceAll('{PAIR}', styled);
+  assignees.push(...pair);
+}
+
+if (template.includes('{TRIO}')) {
+  const trio = uniqueSample(3, assignees);
+  let styled;
+  if (trio.length === 3) {
+    styled = trio.map(p => `<span class="player-name">${p}</span>`).join(', ');
+  } else if (trio.length > 0) {
+    const rendered = trio.map(p => `<span class="player-name">${p}</span>`).join(', ');
+    styled = `${rendered}${rendered ? ', ' : ''}others`;
+  } else {
+    styled = 'a small group';
+  }
+  template = template.replaceAll('{TRIO}', styled);
+  assignees.push(...trio);
+}
+if (template.includes('{PLAYER}')) {
+  const actor = pickOne(assignees);
+  const styled = actor ? `<span class="player-name">${actor}</span>` : 'someone';
+  template = template.replaceAll('{PLAYER}', styled);
+  if (actor) assignees.unshift(actor);
+}
+  if (template.includes('{ALL}')) {
+    const everyoneMarkup = '<span class="player-name">EVERYONE</span>';
+    template = template.replaceAll('{ALL}', everyoneMarkup);
+  }
+  // Assegnazione automatica per QuickPick
+  if (
+    typeof state.currentSectionTitle === "string" &&
+    state.currentSectionTitle.includes("QuickPick") &&
+    state.players.length > 0
+) {
+  const quickPlayer = pickOne();
+  assignees = quickPlayer ? [quickPlayer] : [];
+}
+
+  // No fallback draw when there are no tokens to resolve
+  if (assignees.length === 0) {
+    assignees = [];
+  }
+
+  assignees = [...new Set(assignees)];
+  return { text: template, assignees };
+}
+function updateToggleAllCategoriesButton() {
+  const toggleBtn = document.getElementById('toggleAllCategoriesBtn');
+  if (!toggleBtn) return;
+
+  const total = DATA.length;
+  if (!total) {
+    toggleBtn.textContent = 'No categories available';
+    toggleBtn.disabled = true;
+    toggleBtn.removeAttribute('data-mode');
+    toggleBtn.setAttribute('aria-label', 'No categories available');
+    return;
+  }
+
+  const allEnabled = state.enabled.size === total;
+  toggleBtn.disabled = false;
+  toggleBtn.dataset.mode = allEnabled ? 'disable' : 'enable';
+  toggleBtn.textContent = allEnabled ? 'Disable all' : 'Enable all';
+  toggleBtn.setAttribute(
+    'aria-label',
+    allEnabled ? 'Disable all categories' : 'Enable all categories'
+  );
+}
+
+function ensureEnabledSet() {
+  let hadInvalid = false;
+  if (!(state.enabled instanceof Set)) {
+    state.enabled = new Set();
+    hadInvalid = true;
+  }
+
+  const maxIndex = DATA.length - 1;
+  [...state.enabled].forEach((value) => {
+    if (typeof value !== 'number' || value < 0 || value > maxIndex) {
+      state.enabled.delete(value);
+      hadInvalid = true;
+    }
+  });
+
+  if (!state.enabled.size && DATA.length && hadInvalid) {
+    DATA.forEach((_, idx) => state.enabled.add(idx));
+  }
+
+  return state.enabled;
+}
+
+function renderSections(){
+  const wrap = document.getElementById('sections');
+  ensureEnabledSet();
+  if (!wrap) {
+    updateToggleAllCategoriesButton();
+    updateRemainingCounter();
+    return;
+  }
+  wrap.innerHTML = '';
+  DATA.forEach((sec, idx) => {
+    if (!sec || !Array.isArray(sec.items)) {
+      return;
+    }
+    const total = sec.items.length;
+    const usedCount = ensureUsedSet(idx).size;
+    const remaining = total - usedCount;
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.dataset.enabled = state.enabled.has(idx);
+    chip.textContent = sec.title;
+    const count = document.createElement('span');
+    count.className = 'count';
+    count.textContent = `(${remaining}/${total})`;
+    chip.appendChild(count);
+    chip.addEventListener('click', () => {
+      if (state.enabled.has(idx)) state.enabled.delete(idx);
+      else state.enabled.add(idx);
+      renderSections();
+    });
+    wrap.appendChild(chip);
+  });
+  updateToggleAllCategoriesButton();
+  updateRemainingCounter();
+}
+function ensureUsedSet(secIndex) {
+  if (!Array.isArray(state.used) || state.used.length !== DATA.length) {
+    state.used = DATA.map(() => new Set());
+  }
+  if (!state.used[secIndex]) {
+    state.used[secIndex] = new Set();
+  }
+  return state.used[secIndex];
+}
+function calculateRemainingQuestions() {
+  if (!Array.isArray(DATA) || !DATA.length) return 0;
+  const enabledSet = ensureEnabledSet();
+  const enabledIndices = enabledSet instanceof Set ? Array.from(enabledSet) : [];
+  if (!enabledIndices.length) return 0;
+
+  return enabledIndices.reduce((total, idx) => {
+    const section = DATA[idx];
+    if (!section || !Array.isArray(section.items)) {
+      return total;
+    }
+    const usedSet = ensureUsedSet(idx);
+    const remaining = section.items.length - usedSet.size;
+    return total + Math.max(remaining, 0);
+  }, 0);
+}
+function updateRemainingCounter() {
+  if (!remainingCounterEl) return;
+  const count = calculateRemainingQuestions();
+  if (remainingCounterValueEl) {
+    remainingCounterValueEl.textContent = count;
+  } else {
+    remainingCounterEl.textContent = `Remaining questions: ${count}`;
+  }
+}
+function archiveCurrentQuestion({ addToHistory = true } = {}) {
+  const current = state.current;
+  if (!current || typeof current.secIndex !== 'number' || typeof current.qIndex !== 'number') {
+    return;
+  }
+  const usedSet = ensureUsedSet(current.secIndex);
+  usedSet.add(current.qIndex);
+  if (addToHistory) {
+    state.history.push(current);
+    if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+      renderRewindContent();
+    }
+  }
+}
+function pickRandom(){
+  const enabledIndices = [...ensureEnabledSet()];
+  const candidates = [];
+  for (const idx of enabledIndices) {
+    const sec = DATA[idx];
+    for (let i=0; i<sec.items.length; i++) {
+      if (!state.used[idx].has(i)) candidates.push({secIndex: idx, qIndex: i});
+    }
+  }
+  if (candidates.length === 0) return null;
+  const choice = candidates[Math.floor(Math.random()*candidates.length)];
+  return choice;
+}
+//function typeEffect(element, htmlText, speed = 25) {
+//  element.innerHTML = "";
+//  let i = 0;
+//  const temp = document.createElement("div");
+//  temp.innerHTML = htmlText;
+//  const fullText = temp.innerHTML;
+//  function typeNext() {
+//    if (i < fullText.length) {
+//      element.innerHTML = fullText.substring(0, i);
+//      i++;
+//      setTimeout(typeNext, speed);
+//    } else {
+//      element.innerHTML = fullText;
+//    }
+//  }
+//  typeNext();
+// }
+function showQuestion(choice){
+  window.speechSynthesis.cancel();
+  const actionCluster = document.getElementById('actionCluster');
+  if (actionCluster) {
+    actionCluster.hidden = false;
+  }
+  scheduleQuestionTextScale();
+  const skipBtn = document.getElementById('skipBtn');
+  if (skipBtn) {
+    skipBtn.style.display = state.players.length ? 'flex' : 'none';
+  }
+  const {secIndex, qIndex} = choice;
+  const sec = DATA[secIndex];
+  state.currentSectionTitle = sec.title;
+  const raw = sec.items[qIndex];
+  const { text, assignees } = resolveTokens(raw);
+  state.current = { secIndex, qIndex, raw, text, assignees, section: sec.title };
+  if (Array.isArray(assignees) && assignees.length) {
+    state.lastPlayer = assignees[0];
+  }
+  document.getElementById('category').textContent = sec.title;
+  let displayText = text;
+  displayText = displayText
+//  .replace("⚡ QuickPick ⚡", "⚡ QuickPick ⚡\n")
+//  .replace("🔥 DARE 🔥", "🔥 DARE 🔥\n");
+  setQuestionContent(displayText);
+  const nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.style.display = 'flex';
+  }
+  const speakBtn = document.getElementById('speakBtn');
+  const stopSpeakBtn = document.getElementById('stopSpeakBtn');
+  if (speakBtn) {
+    speakBtn.style.display = 'flex';
+  }
+  if (stopSpeakBtn) {
+    stopSpeakBtn.style.display = 'flex';
+  }
+  if (dislikeBtn) {
+    dislikeBtn.style.display = 'flex';
+  }
+}
+function nextQuestion(){
+  window.speechSynthesis.cancel();
+  if (state.current) {
+    archiveCurrentQuestion({ addToHistory: true });
+  }
+  const pick = pickRandom();
+  if (!pick) {
+    state.current = null;
+    setQuestionContent('No questions left in the selected sections.');
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+      nextBtn.style.display = 'none';
+    }
+    const speakBtn = document.getElementById('speakBtn');
+    const stopSpeakBtn = document.getElementById('stopSpeakBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const actionCluster = document.getElementById('actionCluster');
+    if (speakBtn) speakBtn.style.display = 'none';
+    if (stopSpeakBtn) stopSpeakBtn.style.display = 'none';
+    if (skipBtn) skipBtn.style.display = 'none';
+    if (dislikeBtn) dislikeBtn.style.display = 'none';
+    if (actionCluster) actionCluster.hidden = true;
+    scheduleQuestionTextScale();
+    renderSections();
+    return;
+  }
+  showQuestion(pick);
+  renderSections();
+}
+function skipQuestion(options = {}) {
+  const { preserveCurrent = true } = options;
+  window.speechSynthesis.cancel();
+  const current = state.current;
+  if (!current || !state.players.length) return;
+
+  const currentAssignee = current.assignees?.[0] || null;
+  const samePlayer =
+    currentAssignee ||
+    (state.lastPlayer && state.players.includes(state.lastPlayer) ? state.lastPlayer : null); // the current player
+  const previousSecIndex = current.secIndex;
+  const previousQIndex = current.qIndex;
+  archiveCurrentQuestion({ addToHistory: false });
+  if (
+    preserveCurrent &&
+    typeof previousSecIndex === 'number' &&
+    typeof previousQIndex === 'number'
+  ) {
+    const usedSet = ensureUsedSet(previousSecIndex);
+    usedSet.delete(previousQIndex);
+  }
+
+  let pick = null;
+  let attempts = 0;
+  const maxAttempts = 100;
+
+  while (attempts < maxAttempts) {
+    const candidate = pickRandom();
+    if (!candidate) {
+      pick = null;
+      break;
+    }
+
+    if (
+      preserveCurrent &&
+      candidate.secIndex === previousSecIndex &&
+      candidate.qIndex === previousQIndex
+    ) {
+      attempts++;
+      continue;
+    }
+
+    const qText = DATA[candidate.secIndex].items[candidate.qIndex];
+    const hasRestrictedToken = qText.includes('{PAIR}') || qText.includes('{ALL}');
+    if (hasRestrictedToken) {
+      attempts++;
+      continue;
+    }
+
+    pick = candidate;
+    break;
+  }
+
+  if (!pick) {
+    state.current = null;
+    setQuestionContent('No suitable question found.');
+    const speakBtn = document.getElementById('speakBtn');
+    const stopSpeakBtn = document.getElementById('stopSpeakBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const actionClusterEl = document.getElementById('actionCluster');
+    if (speakBtn) speakBtn.style.display = 'none';
+    if (stopSpeakBtn) stopSpeakBtn.style.display = 'none';
+    if (skipBtn) skipBtn.style.display = 'none';
+    if (dislikeBtn) dislikeBtn.style.display = 'none';
+    if (actionClusterEl) actionClusterEl.hidden = true;
+    scheduleQuestionTextScale();
+    renderSections();
+    return;
+  }
+
+  // Show the new question but keep the same player
+  const { secIndex, qIndex } = pick;
+  const sec = DATA[secIndex];
+  const raw = sec.items[qIndex];
+  state.currentSectionTitle = sec.title;
+
+  // resolve tokens but force {PLAYER} to stay on the previous player
+  let template = raw;
+  const playerMarkup = samePlayer
+    ? `<span class="player-name">${samePlayer}</span>`
+    : 'someone';
+  template = template.replaceAll('{PLAYER}', playerMarkup);
+  template = template.replaceAll('{TARGET}', 'someone'); // generic fallback
+  template = template.replaceAll('{PAIR}', 'someone and someone else');
+  template = template.replaceAll('{TRIO}', 'a small group');
+  template = template.replaceAll('{ALL}', '<span class="player-name">EVERYONE</span>');
+
+  const assignees = samePlayer ? [samePlayer] : [];
+  state.current = { secIndex, qIndex, raw, text: template, assignees, section: sec.title };
+  if (samePlayer) {
+    state.lastPlayer = samePlayer;
+  }
+
+  // display without changing the cycle or the roster
+  document.getElementById('category').textContent = sec.title;
+  setQuestionContent(template);
+  const actionCluster = document.getElementById('actionCluster');
+  if (actionCluster) {
+    actionCluster.hidden = false;
+  }
+  scheduleQuestionTextScale();
+  const nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.style.display = 'flex';
+  }
+  const speakBtn = document.getElementById('speakBtn');
+  const stopSpeakBtn = document.getElementById('stopSpeakBtn');
+  const skipBtn = document.getElementById('skipBtn');
+  if (speakBtn) {
+    speakBtn.style.display = 'flex';
+  }
+  if (stopSpeakBtn) {
+    stopSpeakBtn.style.display = 'flex';
+  }
+  if (skipBtn) {
+    skipBtn.style.display = state.players.length ? 'flex' : 'none';
+  }
+  if (dislikeBtn) {
+    dislikeBtn.style.display = 'flex';
+  }
+  renderSections();
+}
+
+
+function startGame(){
+  if (!state.players.length) {
+    refreshPlayers('Add at least one player before starting the game.');
+    return;
+  }
+  state.cycle = 1;
+  startCycle();
+  state.used = DATA.map(()=> new Set());
+  state.history = [];
+  state.current = null;
+  state.lastPlayer = null;
+  if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+    renderRewindContent();
+  }
+  nextQuestion();
+  refreshPlayers();
+  closeSetupOverlay({ returnFocus: false });
+
+}
+function updatePlayers() {
+  const input = document.getElementById('playersInput');
+  if (!input) return;
+  const raw = input.value.trim();
+  if (!raw) {
+    refreshPlayers();
+    return;
+  }
+  const names = raw.split(/[\n,]+/).map(normalizeName).filter(Boolean);
+  input.value = '';
+  if (!names.length) {
+    refreshPlayers();
+    return;
+  }
+  const added = [];
+  const skipped = [];
+  const seen = new Set(state.players.map((p) => p.toLowerCase()));
+  names.forEach((name) => {
+    const lower = name.toLowerCase();
+    if (!seen.has(lower)) {
+      state.players.push(name);
+      seen.add(lower);
+      added.push(name);
+    } else {
+      skipped.push(name);
+    }
+  });
+  if (added.length && skipped.length) {
+    refreshPlayers(`Already in the roster: ${[...new Set(skipped)].join(', ')}`);
+  } else if (!added.length) {
+    refreshPlayers('Those names are already in the roster.');
+  } else {
+    refreshPlayers();
+  }
+}
+// ---- Init ----
+const controlPanelEl = document.getElementById('controlPanel');
+const setupOverlayEl = document.getElementById('setupOverlay');
+const categoriesOverlayEl = document.getElementById('categoriesOverlay');
+const rewindOverlayEl = document.getElementById('rewindOverlay');
+const flaggedOverlayEl = document.getElementById('flaggedOverlay');
+const suggestionsOverlayEl = document.getElementById('playerSuggestionsOverlay');
+const setupToggleBtn = document.getElementById('setupToggle');
+const categoriesToggleBtn = document.getElementById('categoriesToggle');
+const rewindToggleBtn = document.getElementById('rewindToggle');
+const flaggedToggleBtn = document.getElementById('flaggedToggle');
+const suggestionsToggleBtn = document.getElementById('suggestionsToggle');
+const remainingCounterEl = document.getElementById('remainingQuestionsCounter');
+const remainingCounterValueEl = remainingCounterEl
+  ? remainingCounterEl.querySelector('.count-number')
+  : null;
+const closeSetupBtn = document.getElementById('closeSetupBtn');
+const closeCategoriesBtn = document.getElementById('closeCategoriesBtn');
+const closeRewindBtn = document.getElementById('closeRewindBtn');
+const closeFlaggedBtn = document.getElementById('closeFlaggedBtn');
+const closeSuggestionsBtn = document.getElementById('closeSuggestionsBtn');
+const rewindPanelEl = document.getElementById('rewindPanel');
+const rewindContentEl = document.getElementById('rewindContent');
+const flaggedPanelEl = flaggedOverlayEl ? flaggedOverlayEl.querySelector('.flagged-panel') : null;
+const flaggedContentEl = document.getElementById('flaggedContent');
+const copyFlaggedBtn = document.getElementById('copyFlaggedBtn');
+const suggestionsPanelEl = suggestionsOverlayEl ? suggestionsOverlayEl.querySelector('.suggestions-panel') : null;
+const suggestionsFormEl = document.getElementById('suggestionsForm');
+const suggestionInputEl = document.getElementById('suggestionInput');
+const suggestionModeButtons = document.querySelectorAll('.suggestion-mode-btn');
+const suggestionsListEl = document.getElementById('suggestionsList');
+const copySuggestionsBtn = document.getElementById('copySuggestionsBtn');
+const categoriesPanelEl = categoriesOverlayEl ? categoriesOverlayEl.querySelector('.categories-panel') : null;
+const toggleAllCategoriesBtn = document.getElementById('toggleAllCategoriesBtn');
+const menuHintEl = document.getElementById('menuHint');
+const menuHintButtons = document.querySelectorAll('.menu-toggle[data-hint]');
+const menuHintHeaderEl = menuHintEl ? menuHintEl.closest('header') : null;
+const autoSpeakSupportEl = document.getElementById('autoSpeakSupport');
+const speakBtnEl = document.getElementById('speakBtn');
+const stopSpeakBtnEl = document.getElementById('stopSpeakBtn');
+const speakerSupportMessageEl = document.getElementById('speakerSupportMessage');
+let speakerSupportTimeout = null;
+
+function setOverlayState(overlayEl, toggleBtn, open) {
+  if (!overlayEl) return;
+  overlayEl.classList.toggle('open', open);
+  overlayEl.setAttribute('aria-hidden', (!open).toString());
+  if (toggleBtn) {
+    toggleBtn.setAttribute('aria-expanded', open.toString());
+  }
+}
+
+if (menuHintEl && menuHintButtons.length) {
+  const setMenuHintSpace = () => {
+    if (!menuHintHeaderEl) return;
+    const headerStyles = window.getComputedStyle(menuHintHeaderEl);
+    const paddingLeft = parseFloat(headerStyles.paddingLeft || '0');
+    const paddingRight = parseFloat(headerStyles.paddingRight || '0');
+    const availableWidth = menuHintHeaderEl.clientWidth - paddingLeft - paddingRight;
+    const measurementWidth = Math.min(640, Math.max(availableWidth, 0));
+
+    if (!measurementWidth) {
+      document.documentElement.style.setProperty('--menu-hint-space', '0px');
+      return;
+    }
+
+    const measureEl = document.createElement('div');
+    measureEl.className = 'menu-hint';
+    measureEl.style.position = 'absolute';
+    measureEl.style.visibility = 'hidden';
+    measureEl.style.pointerEvents = 'none';
+    measureEl.style.opacity = '0';
+    measureEl.style.margin = '0';
+    measureEl.style.left = '-9999px';
+    measureEl.style.top = '0';
+    measureEl.style.minHeight = '0';
+    measureEl.style.width = `${measurementWidth}px`;
+    menuHintHeaderEl.appendChild(measureEl);
+
+    let maxHeight = 0;
+    menuHintButtons.forEach((btn) => {
+      const hint = (btn.dataset.hint || '').trim();
+      if (!hint) return;
+      measureEl.textContent = hint;
+      const height = Math.ceil(measureEl.getBoundingClientRect().height);
+      if (height > maxHeight) {
+        maxHeight = height;
+      }
+    });
+
+    menuHintHeaderEl.removeChild(measureEl);
+
+    document.documentElement.style.setProperty('--menu-hint-space', `${maxHeight}px`);
+  };
+
+  setMenuHintSpace();
+
+  let menuHintResizeTimer = null;
+  window.addEventListener('resize', () => {
+    if (menuHintResizeTimer) {
+      clearTimeout(menuHintResizeTimer);
+    }
+    menuHintResizeTimer = setTimeout(setMenuHintSpace, 150);
+  });
+
+  const updateMenuHint = (text) => {
+    const hintText = text?.trim() || '';
+    menuHintEl.textContent = hintText;
+    menuHintEl.classList.toggle('is-visible', hintText.length > 0);
+    menuHintEl.setAttribute('aria-hidden', hintText.length > 0 ? 'false' : 'true');
+  };
+  const clearMenuHint = () => {
+    updateMenuHint('');
+  };
+
+  menuHintButtons.forEach((btn) => {
+    const showHint = () => updateMenuHint(btn.dataset.hint || '');
+    btn.addEventListener('mouseenter', showHint);
+    btn.addEventListener('mouseleave', clearMenuHint);
+    btn.addEventListener('focus', showHint);
+    btn.addEventListener('blur', clearMenuHint);
+  });
+
+  updateMenuHint('');
+}
+
+function renderRewindContent() {
+  if (!rewindContentEl) return;
+  rewindContentEl.innerHTML = '';
+  const lastEntry = state.history.length ? state.history[state.history.length - 1] : null;
+
+  if (!lastEntry) {
+    const empty = document.createElement('p');
+    empty.className = 'rewind-empty';
+    empty.textContent = 'No previous question yet.';
+    rewindContentEl.appendChild(empty);
+    return;
+  }
+
+  const playersPara = document.createElement('p');
+  playersPara.className = 'rewind-meta';
+  const playersLabel = document.createElement('strong');
+  const players = Array.isArray(lastEntry.assignees)
+    ? lastEntry.assignees.filter((name) => !!name)
+    : [];
+  playersLabel.textContent = players.length > 1 ? 'Players:' : 'Player:';
+  playersPara.appendChild(playersLabel);
+  playersPara.appendChild(document.createTextNode(' '));
+
+  if (players.length) {
+    const playersWrap = document.createElement('span');
+    playersWrap.className = 'rewind-players';
+    players.forEach((name) => {
+      const badge = document.createElement('span');
+      badge.textContent = name;
+      playersWrap.appendChild(badge);
+    });
+    playersPara.appendChild(playersWrap);
+  } else {
+    const everyoneWrap = document.createElement('span');
+    everyoneWrap.className = 'rewind-players';
+    const badge = document.createElement('span');
+    badge.textContent = 'Everyone';
+    everyoneWrap.appendChild(badge);
+    playersPara.appendChild(everyoneWrap);
+  }
+  rewindContentEl.appendChild(playersPara);
+
+  if (lastEntry.section) {
+    const sectionPara = document.createElement('p');
+    sectionPara.className = 'rewind-meta';
+    const sectionLabel = document.createElement('strong');
+    sectionLabel.textContent = 'Category:';
+    sectionPara.appendChild(sectionLabel);
+    sectionPara.appendChild(document.createTextNode(` ${lastEntry.section}`));
+    rewindContentEl.appendChild(sectionPara);
+  }
+
+  const questionPara = document.createElement('p');
+  questionPara.className = 'rewind-question';
+  questionPara.textContent = toPlainQuestionText(lastEntry.text) || '—';
+  rewindContentEl.appendChild(questionPara);
+}
+
+function getFlaggedEntries() {
+  return Array.from(state.flagged.values());
+}
+
+function updateFlaggedIndicators() {
+  const count = state.flagged.size;
+  const countValue = count ? String(count) : '';
+  if (dislikeBtn) {
+    dislikeBtn.dataset.count = countValue;
+    const baseLabel = 'Flag this question as unsuitable';
+    dislikeBtn.setAttribute(
+      'aria-label',
+      count ? `${baseLabel}. ${count} flagged for review.` : baseLabel
+    );
+    dislikeBtn.title = count ? `Flag this question (${count} flagged)` : 'Flag this question';
+  }
+  if (flaggedToggleBtn) {
+    flaggedToggleBtn.dataset.count = countValue;
+    const label = count
+      ? `Open flagged questions list (${count})`
+      : 'Open flagged questions list';
+    flaggedToggleBtn.setAttribute('aria-label', label);
+  }
+  if (copyFlaggedBtn) {
+    copyFlaggedBtn.disabled = count === 0;
+  }
+}
+
+function renderFlaggedContent() {
+  if (!flaggedContentEl) return;
+  flaggedContentEl.innerHTML = '';
+  updateFlaggedIndicators();
+
+  const entries = getFlaggedEntries();
+  if (!entries.length) {
+    const empty = document.createElement('p');
+    empty.className = 'flagged-empty';
+    empty.textContent = 'No flagged questions yet.';
+    flaggedContentEl.appendChild(empty);
+    return;
+  }
+
+  entries.forEach((entry, index) => {
+    const item = document.createElement('article');
+    item.className = 'flagged-entry';
+
+    const header = document.createElement('div');
+    header.className = 'flagged-entry-header';
+
+    const headerGroup = document.createElement('div');
+    headerGroup.className = 'flagged-entry-header-group';
+
+    const indexBadge = document.createElement('span');
+    indexBadge.className = 'flagged-index';
+    indexBadge.textContent = `#${index + 1}`;
+    headerGroup.appendChild(indexBadge);
+
+    const sectionLabel = document.createElement('span');
+    sectionLabel.className = 'flagged-section';
+    sectionLabel.textContent = entry.section || 'Uncategorised';
+    headerGroup.appendChild(sectionLabel);
+
+    header.appendChild(headerGroup);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'flagged-remove';
+    removeBtn.dataset.action = 'remove-flagged';
+    const entryKey = entry.key || '';
+    removeBtn.dataset.key = entryKey;
+    removeBtn.setAttribute('aria-label', `Remove flagged question #${index + 1}`);
+    removeBtn.textContent = 'Remove';
+    if (!entryKey) {
+      removeBtn.disabled = true;
+    }
+    header.appendChild(removeBtn);
+
+    item.appendChild(header);
+
+    const rawBlock = document.createElement('div');
+    rawBlock.className = 'flagged-block';
+    const rawLabel = document.createElement('span');
+    rawLabel.className = 'flagged-label';
+    rawLabel.textContent = 'questions.js entry';
+    rawBlock.appendChild(rawLabel);
+    const rawText = document.createElement('pre');
+    rawText.className = 'flagged-question';
+    rawText.textContent = entry.raw || entry.rendered || '';
+    rawBlock.appendChild(rawText);
+    item.appendChild(rawBlock);
+
+    flaggedContentEl.appendChild(item);
+  });
+}
+
+function closeFlaggedOverlay({ returnFocus = true } = {}) {
+  if (!flaggedOverlayEl || !flaggedOverlayEl.classList.contains('open')) return;
+  setOverlayState(flaggedOverlayEl, flaggedToggleBtn, false);
+  if (returnFocus && flaggedToggleBtn) {
+    flaggedToggleBtn.focus({ preventScroll: true });
+  }
+}
+
+function openFlaggedOverlay() {
+  if (!flaggedOverlayEl) return;
+  if (setupOverlayEl && setupOverlayEl.classList.contains('open')) {
+    closeSetupOverlay({ returnFocus: false });
+  }
+  if (categoriesOverlayEl && categoriesOverlayEl.classList.contains('open')) {
+    closeCategoriesOverlay({ returnFocus: false });
+  }
+  if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+    closeRewindOverlay({ returnFocus: false });
+  }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
+  }
+  renderFlaggedContent();
+  setOverlayState(flaggedOverlayEl, flaggedToggleBtn, true);
+  window.requestAnimationFrame(() => {
+    if (flaggedPanelEl) {
+      flaggedPanelEl.focus({ preventScroll: true });
+    }
+  });
+}
+
+function flagCurrentQuestion() {
+  const current = state.current;
+  if (!current) {
+    return false;
+  }
+
+  const key = `${current.secIndex}:${current.qIndex}`;
+  const sectionTitle = current.section || (DATA[current.secIndex]?.title ?? '');
+  const rendered = current.text ? toPlainQuestionText(current.text) : '';
+  const existing = state.flagged.get(key);
+  const entry = existing || {
+    key,
+    secIndex: current.secIndex,
+    qIndex: current.qIndex,
+    section: sectionTitle,
+    raw: current.raw || rendered,
+    rendered,
+    timestamp: Date.now(),
+  };
+
+  ensureUsedSet(current.secIndex).add(current.qIndex);
+
+  entry.secIndex = current.secIndex;
+  entry.qIndex = current.qIndex;
+  entry.section = sectionTitle || entry.section;
+  entry.raw = current.raw || entry.raw;
+  entry.rendered = rendered || entry.rendered || '';
+
+  state.flagged.set(key, entry);
+
+  if (dislikeBtn) {
+    dislikeBtn.classList.add('is-flagged');
+    window.clearTimeout(dislikeBtn._flagTimeout);
+    dislikeBtn._flagTimeout = window.setTimeout(() => {
+      dislikeBtn.classList.remove('is-flagged');
+    }, 520);
+  }
+
+  updateFlaggedIndicators();
+  if (flaggedOverlayEl && flaggedOverlayEl.classList.contains('open')) {
+    renderFlaggedContent();
+  }
+
+  renderSections();
+
+  return true;
+}
+
+function removeFlaggedEntry(key) {
+  if (!key) return;
+
+  const entry = state.flagged.get(key);
+  if (!entry) return;
+
+  state.flagged.delete(key);
+
+  if (Array.isArray(state.used) && state.used.length) {
+    const secIndex = Number(entry.secIndex);
+    const qIndex = Number(entry.qIndex);
+    if (!Number.isNaN(secIndex) && !Number.isNaN(qIndex) && state.used[secIndex]) {
+      state.used[secIndex].delete(qIndex);
+    }
+  }
+
+  if (copyFlaggedBtn) {
+    window.clearTimeout(copyFlaggedFeedbackTimeout);
+    copyFlaggedBtn.dataset.state = '';
+    copyFlaggedBtn.textContent = 'Copy list';
+  }
+
+  updateFlaggedIndicators();
+  renderSections();
+
+  if (flaggedOverlayEl && flaggedOverlayEl.classList.contains('open')) {
+    renderFlaggedContent();
+  }
+}
+
+async function copyFlaggedQuestions() {
+  if (!copyFlaggedBtn) return;
+  const entries = getFlaggedEntries();
+  if (!entries.length) return;
+
+  const payload = entries
+    .map((entry, index) => {
+      const section = entry.section ? `[${entry.section}] ` : '';
+      return `${index + 1}. ${section}${entry.raw || entry.rendered || ''}`;
+    })
+    .join('\n');
+
+  let success = false;
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    try {
+      await navigator.clipboard.writeText(payload);
+      success = true;
+    } catch (_) {}
+  }
+
+  if (!success) {
+    const helper = document.createElement('textarea');
+    helper.value = payload;
+    helper.setAttribute('aria-hidden', 'true');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    helper.style.pointerEvents = 'none';
+    document.body.appendChild(helper);
+    helper.focus();
+    helper.select();
+    try {
+      success = document.execCommand('copy');
+    } catch (_) {
+      success = false;
+    }
+    helper.remove();
+  }
+
+  const originalText = 'Copy list';
+  copyFlaggedBtn.textContent = success ? 'Copied!' : 'Copy failed';
+  copyFlaggedBtn.dataset.state = success ? 'success' : 'error';
+  window.clearTimeout(copyFlaggedFeedbackTimeout);
+  copyFlaggedFeedbackTimeout = window.setTimeout(() => {
+    copyFlaggedBtn.dataset.state = '';
+    copyFlaggedBtn.textContent = originalText;
+  }, success ? 2200 : 2600);
+}
+
+function resetCopySuggestionsButton() {
+  if (!copySuggestionsBtn) return;
+  window.clearTimeout(copySuggestionsFeedbackTimeout);
+  copySuggestionsBtn.dataset.state = '';
+  copySuggestionsBtn.textContent = 'Copy list';
+}
+
+function updateSuggestionsIndicators() {
+  const entries = Array.isArray(state.suggestions) ? state.suggestions : [];
+  const count = entries.length;
+  const countValue = count ? String(count) : '';
+  if (suggestionsToggleBtn) {
+    suggestionsToggleBtn.dataset.count = countValue;
+    const label = count
+      ? `Open player suggestions (${count})`
+      : 'Open player suggestions';
+    suggestionsToggleBtn.setAttribute('aria-label', label);
+  }
+  if (copySuggestionsBtn) {
+    copySuggestionsBtn.disabled = count === 0;
+  }
+}
+
+function formatSuggestionText(mode, text) {
+  const token = mode === 'PLAYER' ? 'PLAYER' : 'ALL';
+  return `{${token}}: ${text}`;
+}
+
+function formatSuggestionCopyText(mode, text) {
+  return `    "${formatSuggestionText(mode, text)}",`;
+}
+
+function renderSuggestionsList() {
+  if (!suggestionsListEl) return;
+  suggestionsListEl.innerHTML = '';
+  updateSuggestionsIndicators();
+
+  const entries = Array.isArray(state.suggestions) ? state.suggestions : [];
+  if (!entries.length) {
+    const empty = document.createElement('p');
+    empty.className = 'suggestions-empty';
+    empty.textContent = 'No suggestions yet.';
+    suggestionsListEl.appendChild(empty);
+    return;
+  }
+
+  entries.forEach((entry) => {
+    const item = document.createElement('article');
+    item.className = 'suggestion-entry';
+    item.dataset.id = entry.id;
+
+    const header = document.createElement('div');
+    header.className = 'suggestion-entry-header';
+
+    const modeBadge = document.createElement('span');
+    modeBadge.className = 'suggestion-entry-mode';
+    modeBadge.dataset.mode = entry.mode === 'PLAYER' ? 'PLAYER' : 'ALL';
+    modeBadge.textContent = entry.mode === 'PLAYER' ? 'For Player' : 'For Everyone';
+    header.appendChild(modeBadge);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'suggestion-remove';
+    removeBtn.dataset.action = 'remove-suggestion';
+    removeBtn.dataset.id = entry.id;
+    removeBtn.setAttribute(
+      'aria-label',
+      `Remove suggestion ${entry.mode === 'PLAYER' ? 'for player' : 'for everyone'}`
+    );
+    removeBtn.textContent = 'Remove';
+    header.appendChild(removeBtn);
+
+    item.appendChild(header);
+
+    const textPara = document.createElement('p');
+    textPara.className = 'suggestion-text';
+    textPara.textContent = formatSuggestionText(entry.mode, entry.text);
+    item.appendChild(textPara);
+
+    suggestionsListEl.appendChild(item);
+  });
+}
+
+function removeSuggestionEntry(id) {
+  if (!Array.isArray(state.suggestions) || !id) return;
+  const index = state.suggestions.findIndex((entry) => entry.id === id);
+  if (index === -1) return;
+  state.suggestions.splice(index, 1);
+  resetCopySuggestionsButton();
+  renderSuggestionsList();
+}
+
+function setSuggestionMode(nextMode) {
+  const normalized = nextMode === 'PLAYER' ? 'PLAYER' : 'ALL';
+  suggestionMode = normalized;
+  if (suggestionModeButtons && suggestionModeButtons.length) {
+    suggestionModeButtons.forEach((btn) => {
+      const btnMode = btn.dataset.suggestionMode === 'PLAYER' ? 'PLAYER' : 'ALL';
+      btn.setAttribute('aria-pressed', (btnMode === suggestionMode).toString());
+    });
+  }
+}
+
+async function copySuggestionEntries() {
+  if (!copySuggestionsBtn) return;
+  const entries = Array.isArray(state.suggestions) ? state.suggestions : [];
+  if (!entries.length) return;
+
+  const payload = entries.map((entry) => formatSuggestionCopyText(entry.mode, entry.text)).join('\n');
+
+  let success = false;
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    try {
+      await navigator.clipboard.writeText(payload);
+      success = true;
+    } catch (_) {}
+  }
+
+  if (!success) {
+    const helper = document.createElement('textarea');
+    helper.value = payload;
+    helper.setAttribute('aria-hidden', 'true');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    helper.style.pointerEvents = 'none';
+    document.body.appendChild(helper);
+    helper.focus();
+    helper.select();
+    try {
+      success = document.execCommand('copy');
+    } catch (_) {
+      success = false;
+    }
+    helper.remove();
+  }
+
+  const originalText = 'Copy list';
+  copySuggestionsBtn.textContent = success ? 'Copied!' : 'Copy failed';
+  copySuggestionsBtn.dataset.state = success ? 'success' : 'error';
+  window.clearTimeout(copySuggestionsFeedbackTimeout);
+  copySuggestionsFeedbackTimeout = window.setTimeout(() => {
+    copySuggestionsBtn.dataset.state = '';
+    copySuggestionsBtn.textContent = originalText;
+  }, success ? 2200 : 2600);
+}
+
+function closeSuggestionsOverlay({ returnFocus = true } = {}) {
+  if (!suggestionsOverlayEl || !suggestionsOverlayEl.classList.contains('open')) return;
+  setOverlayState(suggestionsOverlayEl, suggestionsToggleBtn, false);
+  if (returnFocus && suggestionsToggleBtn) {
+    suggestionsToggleBtn.focus({ preventScroll: true });
+  }
+}
+
+function openSuggestionsOverlay() {
+  if (!suggestionsOverlayEl) return;
+  if (setupOverlayEl && setupOverlayEl.classList.contains('open')) {
+    closeSetupOverlay({ returnFocus: false });
+  }
+  if (categoriesOverlayEl && categoriesOverlayEl.classList.contains('open')) {
+    closeCategoriesOverlay({ returnFocus: false });
+  }
+  if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+    closeRewindOverlay({ returnFocus: false });
+  }
+  if (flaggedOverlayEl && flaggedOverlayEl.classList.contains('open')) {
+    closeFlaggedOverlay({ returnFocus: false });
+  }
+  renderSuggestionsList();
+  setOverlayState(suggestionsOverlayEl, suggestionsToggleBtn, true);
+  window.requestAnimationFrame(() => {
+    if (suggestionInputEl) {
+      suggestionInputEl.focus({ preventScroll: true });
+    } else if (suggestionsPanelEl) {
+      suggestionsPanelEl.focus({ preventScroll: true });
+    }
+  });
+}
+
+function closeSetupOverlay({ returnFocus = true } = {}) {
+  if (!setupOverlayEl || !setupOverlayEl.classList.contains('open')) return;
+  setOverlayState(setupOverlayEl, setupToggleBtn, false);
+  if (returnFocus && setupToggleBtn) {
+    setupToggleBtn.focus({ preventScroll: true });
+  }
+}
+
+function closeCategoriesOverlay({ returnFocus = true } = {}) {
+  if (!categoriesOverlayEl || !categoriesOverlayEl.classList.contains('open')) return;
+  setOverlayState(categoriesOverlayEl, categoriesToggleBtn, false);
+  if (returnFocus && categoriesToggleBtn) {
+    categoriesToggleBtn.focus({ preventScroll: true });
+  }
+}
+
+function closeRewindOverlay({ returnFocus = true } = {}) {
+  if (!rewindOverlayEl || !rewindOverlayEl.classList.contains('open')) return;
+  setOverlayState(rewindOverlayEl, rewindToggleBtn, false);
+  if (returnFocus && rewindToggleBtn) {
+    rewindToggleBtn.focus({ preventScroll: true });
+  }
+}
+
+function openSetupOverlay() {
+  if (!setupOverlayEl) return;
+  if (categoriesOverlayEl && categoriesOverlayEl.classList.contains('open')) {
+    closeCategoriesOverlay({ returnFocus: false });
+  }
+  if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+    closeRewindOverlay({ returnFocus: false });
+  }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
+  }
+  setOverlayState(setupOverlayEl, setupToggleBtn, true);
+  window.requestAnimationFrame(() => {
+    const input = document.getElementById('playersInput');
+    if (input) {
+      input.focus({ preventScroll: true });
+    } else if (controlPanelEl) {
+      controlPanelEl.focus({ preventScroll: true });
+    }
+  });
+}
+
+function openCategoriesOverlay() {
+  if (!categoriesOverlayEl) return;
+  if (setupOverlayEl && setupOverlayEl.classList.contains('open')) {
+    closeSetupOverlay({ returnFocus: false });
+  }
+  if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+    closeRewindOverlay({ returnFocus: false });
+  }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
+  }
+  setOverlayState(categoriesOverlayEl, categoriesToggleBtn, true);
+  window.requestAnimationFrame(() => {
+    const firstChip = categoriesOverlayEl.querySelector('#sections button');
+    if (firstChip) {
+      firstChip.focus({ preventScroll: true });
+    } else if (categoriesPanelEl) {
+      categoriesPanelEl.focus({ preventScroll: true });
+    }
+  });
+}
+
+function openRewindOverlay() {
+  if (!rewindOverlayEl) return;
+  if (setupOverlayEl && setupOverlayEl.classList.contains('open')) {
+    closeSetupOverlay({ returnFocus: false });
+  }
+  if (categoriesOverlayEl && categoriesOverlayEl.classList.contains('open')) {
+    closeCategoriesOverlay({ returnFocus: false });
+  }
+  if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+    closeSuggestionsOverlay({ returnFocus: false });
+  }
+  renderRewindContent();
+  setOverlayState(rewindOverlayEl, rewindToggleBtn, true);
+  window.requestAnimationFrame(() => {
+    if (rewindPanelEl) {
+      rewindPanelEl.focus({ preventScroll: true });
+    }
+  });
+}
+
+if (setupToggleBtn && setupOverlayEl) {
+  setupToggleBtn.addEventListener('click', () => {
+    if (setupOverlayEl.classList.contains('open')) {
+      closeSetupOverlay();
+    } else {
+      openSetupOverlay();
+    }
+  });
+}
+
+if (categoriesToggleBtn && categoriesOverlayEl) {
+  categoriesToggleBtn.addEventListener('click', () => {
+    if (categoriesOverlayEl.classList.contains('open')) {
+      closeCategoriesOverlay();
+    } else {
+      openCategoriesOverlay();
+    }
+  });
+}
+
+if (suggestionsToggleBtn && suggestionsOverlayEl) {
+  suggestionsToggleBtn.addEventListener('click', () => {
+    if (suggestionsOverlayEl.classList.contains('open')) {
+      closeSuggestionsOverlay();
+    } else {
+      openSuggestionsOverlay();
+    }
+  });
+}
+
+if (flaggedToggleBtn && flaggedOverlayEl) {
+  flaggedToggleBtn.addEventListener('click', () => {
+    if (flaggedOverlayEl.classList.contains('open')) {
+      closeFlaggedOverlay();
+    } else {
+      openFlaggedOverlay();
+    }
+  });
+}
+
+if (toggleAllCategoriesBtn) {
+  toggleAllCategoriesBtn.addEventListener('click', () => {
+    if (!DATA.length) return;
+    ensureEnabledSet();
+    const allEnabled = state.enabled.size === DATA.length;
+    if (allEnabled) {
+      state.enabled.clear();
+    } else {
+      DATA.forEach((_, idx) => state.enabled.add(idx));
+    }
+    renderSections();
+  });
+  updateToggleAllCategoriesButton();
+}
+
+if (rewindToggleBtn && rewindOverlayEl) {
+  rewindToggleBtn.addEventListener('click', () => {
+    if (rewindOverlayEl.classList.contains('open')) {
+      closeRewindOverlay();
+    } else {
+      openRewindOverlay();
+    }
+  });
+}
+
+if (closeSetupBtn) {
+  closeSetupBtn.addEventListener('click', () => closeSetupOverlay());
+}
+
+if (closeCategoriesBtn) {
+  closeCategoriesBtn.addEventListener('click', () => closeCategoriesOverlay());
+}
+
+if (closeRewindBtn) {
+  closeRewindBtn.addEventListener('click', () => closeRewindOverlay());
+}
+
+if (closeFlaggedBtn) {
+  closeFlaggedBtn.addEventListener('click', () => closeFlaggedOverlay());
+}
+
+if (closeSuggestionsBtn) {
+  closeSuggestionsBtn.addEventListener('click', () => closeSuggestionsOverlay());
+}
+
+if (setupOverlayEl) {
+  setupOverlayEl.addEventListener('click', (event) => {
+    if (event.target === setupOverlayEl) {
+      closeSetupOverlay();
+    }
+  });
+}
+
+if (categoriesOverlayEl) {
+  categoriesOverlayEl.addEventListener('click', (event) => {
+    if (event.target === categoriesOverlayEl) {
+      closeCategoriesOverlay();
+    }
+  });
+}
+
+if (rewindOverlayEl) {
+  rewindOverlayEl.addEventListener('click', (event) => {
+    if (event.target === rewindOverlayEl) {
+      closeRewindOverlay();
+    }
+  });
+}
+
+if (suggestionsOverlayEl) {
+  suggestionsOverlayEl.addEventListener('click', (event) => {
+    if (event.target === suggestionsOverlayEl) {
+      closeSuggestionsOverlay();
+    }
+  });
+}
+
+if (copyFlaggedBtn) {
+  copyFlaggedBtn.addEventListener('click', () => {
+    copyFlaggedQuestions();
+  });
+}
+
+if (flaggedContentEl) {
+  flaggedContentEl.addEventListener('click', (event) => {
+    const trigger = event.target.closest('[data-action="remove-flagged"]');
+    if (!trigger) return;
+    const { key } = trigger.dataset;
+    if (!key) return;
+    removeFlaggedEntry(key);
+  });
+}
+
+if (copySuggestionsBtn) {
+  copySuggestionsBtn.addEventListener('click', () => {
+    copySuggestionEntries();
+  });
+}
+
+if (suggestionsListEl) {
+  suggestionsListEl.addEventListener('click', (event) => {
+    const trigger = event.target.closest('[data-action="remove-suggestion"]');
+    if (!trigger) return;
+    const { id } = trigger.dataset;
+    if (!id) return;
+    removeSuggestionEntry(id);
+  });
+}
+
+if (suggestionsFormEl && suggestionInputEl) {
+  suggestionsFormEl.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const raw = suggestionInputEl.value;
+    const sanitized = typeof raw === 'string' ? raw.replace(/\s+/g, ' ').trim() : '';
+    if (!sanitized) {
+      suggestionInputEl.value = '';
+      suggestionInputEl.focus({ preventScroll: true });
+      return;
+    }
+    if (!Array.isArray(state.suggestions)) {
+      state.suggestions = [];
+    }
+    const entry = {
+      id: `s-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+      mode: suggestionMode === 'PLAYER' ? 'PLAYER' : 'ALL',
+      text: sanitized,
+    };
+    state.suggestions.push(entry);
+    resetCopySuggestionsButton();
+    renderSuggestionsList();
+    suggestionInputEl.value = '';
+    suggestionInputEl.focus({ preventScroll: true });
+  });
+}
+
+if (suggestionModeButtons && suggestionModeButtons.length) {
+  suggestionModeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.suggestionMode === 'PLAYER' ? 'PLAYER' : 'ALL';
+      setSuggestionMode(mode);
+    });
+  });
+}
+
+setSuggestionMode(suggestionMode);
+
+if (dislikeBtn) {
+  dislikeBtn.addEventListener('click', () => {
+    const flagged = flagCurrentQuestion();
+    if (!flagged) return;
+    if (state.players.length) {
+      skipQuestion({ preserveCurrent: false });
+    } else {
+      nextQuestion();
+    }
+  });
+}
+
+if (flaggedOverlayEl) {
+  flaggedOverlayEl.addEventListener('click', (event) => {
+    if (event.target === flaggedOverlayEl) {
+      closeFlaggedOverlay();
+    }
+  });
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    if (suggestionsOverlayEl && suggestionsOverlayEl.classList.contains('open')) {
+      closeSuggestionsOverlay();
+      event.preventDefault();
+    } else if (flaggedOverlayEl && flaggedOverlayEl.classList.contains('open')) {
+      closeFlaggedOverlay();
+      event.preventDefault();
+    } else if (rewindOverlayEl && rewindOverlayEl.classList.contains('open')) {
+      closeRewindOverlay();
+      event.preventDefault();
+    } else if (categoriesOverlayEl && categoriesOverlayEl.classList.contains('open')) {
+      closeCategoriesOverlay();
+      event.preventDefault();
+    } else if (setupOverlayEl && setupOverlayEl.classList.contains('open')) {
+      closeSetupOverlay();
+      event.preventDefault();
+    }
+  }
+});
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+document.getElementById('playersInput').addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    updatePlayers();
+  }
+});
+document.getElementById('playersList').addEventListener('click', (event) => {
+  const chip = event.target.closest('.player-chip');
+  if (!chip) return;
+  removePlayerByName(chip.dataset.name);
+});
+document.getElementById('clearPlayersBtn').addEventListener('click', clearPlayers);
+renderSections();
+refreshPlayers();
+updateFlaggedIndicators();
+updateSuggestionsIndicators();
+
+// ---- Voice Select ----
+function populateVoiceList() {
+  const select = document.getElementById("voiceSelect");
+  const voices = speechSynthesis.getVoices();
+  select.innerHTML = "";
+  voices.forEach((voice) => {
+    const option = document.createElement("option");
+    option.value = voice.name;
+    option.textContent = voice.name + " (" + voice.lang + ")";
+    if (voice.default) option.textContent += " [default]";
+    // Auto-select a preferred sample voice if it matches
+    if (voice.name === "Google UK English Male" && voice.lang === "en-GB") {
+      option.selected = true;
+    }
+    select.appendChild(option);
+  });
+}
+speechSynthesis.onvoiceschanged = populateVoiceList;
+populateVoiceList();
+
+// ---- TTS ----
+function speakCurrentQuestion() {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+    return;
+  }
+
+  const text = currentQuestionPlainText || (questionEl ? questionEl.innerText : '');
+  if (!text || !text.trim()) return;
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voiceSelect = document.getElementById('voiceSelect');
+  const selectedVoice = voiceSelect ? voiceSelect.value : '';
+  if (selectedVoice) {
+    const voices = speechSynthesis.getVoices();
+    const voice = voices.find((v) => v.name === selectedVoice);
+    if (voice) {
+      utterance.voice = voice;
+    }
+  }
+  utterance.lang = utterance.voice?.lang || 'en-US';
+  utterance.rate = 1;
+  utterance.pitch = 1;
+
+  window.speechSynthesis.speak(utterance);
+}
+
+const chromeSpeechSupported = (() => {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  if (!ua) return false;
+  const hasChromeToken = ua.includes('Chrome') || ua.includes('CriOS');
+  if (!hasChromeToken) return false;
+  const blockedTokens = ['Edg/', 'OPR/', 'Opera', 'SamsungBrowser', 'UCBrowser', 'YaBrowser', 'DuckDuckGo', 'Brave/'];
+  return !blockedTokens.some((token) => ua.includes(token));
+})();
+
+const speechApiAvailable = typeof window !== 'undefined'
+  && 'speechSynthesis' in window
+  && typeof SpeechSynthesisUtterance !== 'undefined';
+
+function hideSpeakerSupportWarning() {
+  if (!speakerSupportMessageEl) return;
+  speakerSupportMessageEl.hidden = true;
+  speakerSupportMessageEl.setAttribute('aria-hidden', 'true');
+  if (speakerSupportTimeout) {
+    clearTimeout(speakerSupportTimeout);
+    speakerSupportTimeout = null;
+  }
+}
+
+function showSpeakerSupportWarning() {
+  if (!speakerSupportMessageEl) return;
+  if (speakerSupportTimeout) {
+    clearTimeout(speakerSupportTimeout);
+  }
+  speakerSupportMessageEl.hidden = false;
+  speakerSupportMessageEl.setAttribute('aria-hidden', 'false');
+  speakerSupportTimeout = setTimeout(() => {
+    hideSpeakerSupportWarning();
+  }, 2600);
+}
+
+if (speakerSupportMessageEl) {
+  hideSpeakerSupportWarning();
+}
+
+if (speakBtnEl) {
+  speakBtnEl.addEventListener('click', () => {
+    if (!chromeSpeechSupported) {
+      showSpeakerSupportWarning();
+      return;
+    }
+    hideSpeakerSupportWarning();
+    speakCurrentQuestion();
+  });
+}
+
+if (stopSpeakBtnEl) {
+  stopSpeakBtnEl.addEventListener('click', () => {
+    window.speechSynthesis.cancel();
+  });
+}
+
+const autoSpeakToggle = document.getElementById('autoSpeakToggle');
+if (autoSpeakToggle) {
+  const container = autoSpeakToggle.closest('.auto-speak-toggle');
+  const autoSpeakAvailable = chromeSpeechSupported && speechApiAvailable;
+
+  if (!autoSpeakAvailable) {
+    autoSpeakToggle.checked = false;
+    autoSpeakToggle.disabled = true;
+    state.autoSpeak = false;
+    if (container) {
+      container.classList.remove('is-active');
+      container.classList.add('is-disabled');
+      container.setAttribute('aria-disabled', 'true');
+    }
+    if (autoSpeakSupportEl) {
+      autoSpeakSupportEl.hidden = false;
+      autoSpeakSupportEl.setAttribute('aria-hidden', 'false');
+    }
+  } else {
+    autoSpeakToggle.disabled = false;
+    if (container) {
+      container.classList.remove('is-disabled');
+      container.removeAttribute('aria-disabled');
+      container.classList.toggle('is-active', autoSpeakToggle.checked);
+    }
+    if (autoSpeakSupportEl) {
+      autoSpeakSupportEl.hidden = true;
+      autoSpeakSupportEl.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  autoSpeakToggle.addEventListener('change', () => {
+    if (!autoSpeakAvailable || autoSpeakToggle.disabled) {
+      autoSpeakToggle.checked = false;
+      state.autoSpeak = false;
+      if (container) {
+        container.classList.remove('is-active');
+      }
+      return;
+    }
+
+    state.autoSpeak = autoSpeakToggle.checked;
+    if (container) {
+      container.classList.toggle('is-active', state.autoSpeak);
+    }
+    if (state.autoSpeak) {
+      const currentText = state.current?.text;
+      const plainCurrent = currentText ? toPlainQuestionText(currentText) : '';
+      if (plainCurrent && plainCurrent === currentQuestionPlainText) {
+        speakCurrentQuestion();
+      }
+    } else {
+      window.speechSynthesis.cancel();
+    }
+  });
+
+  if (autoSpeakAvailable && container) {
+    container.classList.toggle('is-active', autoSpeakToggle.checked);
+  }
+}
+document.getElementById("toggleVoice").addEventListener("click", () => {
+  const select = document.getElementById("voiceSelect");
+  if (select.style.display === "none") {
+    select.style.display = "inline-block";
+  } else {
+    select.style.display = "none";
+  }
+});
+document.getElementById('skipBtn').addEventListener('click', skipQuestion);
+
+</script>
+</body>
+</html>
