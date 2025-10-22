@@ -6,6 +6,8 @@ window.QUESTION_DATA = [
       "{PLAYER}, what’s your little luxury that makes you smile even on a bad day?",
       "{ALL}, what body part is the funniest to describe without showing it?",
       "{PLAYER}, if you were a summer drink, which one would you be and why?",
+      "{PLAYER}, have you ever sold drugs?",
+      "{PLAYER}, have you ever sleep walked and what have you done.",
       "{PLAYER}, which emoji best describes your energy today?",
       "{PLAYER}, what harmless compliment always makes you a bit shy?",
       "{ALL}, what do you prefer: comfortable silence or light chatter?",
