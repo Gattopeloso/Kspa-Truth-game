@@ -192,7 +192,6 @@ window.QUESTION_DATA = [
     title: "🔥 Spicy & Suggestive 👀",
     items: [
       "{PLAYER}, what kind of look in the eyes makes you feel a spark?",
-      "{PLAYER}, what is hotter: a look that stays or a smile that fades?",
       "{PLAYER}, what small move feels stronger than words?",
       "{PLAYER}, what feels more bold: sitting close or leaning in?",
       "{PLAYER}, what do your hands do when you feel shy but excited?",
@@ -420,7 +419,7 @@ window.QUESTION_DATA = [
       "{PLAYER}, what’s the most relaxing nude ritual in a spa?",
       "{PLAYER}, what’s more fun: soaking nude in hot water or sweating in a sauna?",
       "{PLAYER}, what’s your towel trick in a Korean spa?",
-      "{PLAYER}, what do you enjoy most after a nude bath: food, nap, or chat?",
+      "{PLAYER}, what do you enjoy most after a nude swim: food, nap, or chat?",
       "{PLAYER}, what part of spa nudity feels most intimate but not sexual?",
       "{PLAYER}, how would you explain the feeling of a nude spa to a friend?",
       "{PLAYER}, what’s the best way to break the ice at a nude campfire?",
@@ -678,7 +677,6 @@ window.QUESTION_DATA = [
     "{ALL}: Never have I ever been in love with someone who didn’t love me back.",
     "{ALL}: Never have I ever stayed friends with someone just because I was still attracted to them.",
     "{ALL}: Never have I ever been turned on by someone’s voice.",
-    "{ALL}: Never have I ever been caught flirting in public.",
     "{ALL}: Never have I ever imagined a coworker naked.",
     "{ALL}: Never have I ever gone on a date just because I was bored.",
     "{ALL}: Never have I ever been caught in a lie during a hookup.",
@@ -748,7 +746,6 @@ window.QUESTION_DATA = [
   "{ALL}: Never have I ever been rejected when I wanted to do it with my partner.",
   "{ALL}: Never have I ever dumped someone because of bad sex.",
   "{ALL}: Never have I ever watched porn with a partner.",
-  "{ALL}: Never have I ever worried about having AIDS.",
   "{ALL}: Never have I ever watched a TV series just for the steamy scenes.",
   "{ALL}: Never have I ever given someone a fake phone number.",
   "{ALL}: Never have I ever disliked being kissed on the neck.",
@@ -764,7 +761,7 @@ window.QUESTION_DATA = [
   "{ALL}: Never have I ever flirted with my college professor.",
   "{ALL}: Never have I ever gone to a booty call.",
   "{ALL}: Never have I ever had a friend in bed.",
-  "{ALL}: Never have I ever owned a magazine.",
+  "{ALL}: Never have I ever owned a porn magazine.",
   "{ALL}: Never have I ever forgot who I had sex with the night before because of a hangover.",
   "{ALL}: Never have I ever had sex with anyone more than five years younger than me.",
   "{ALL}: Never have I ever gave lingerie to someone I dated.",
@@ -929,7 +926,7 @@ window.QUESTION_DATA = [
  ]
 },
 	{
-  "title": "❓ What Would You Rather ❔",
+  "title": "🔀 What Would You Rather 🥵",
   "items": [
     "{PLAYER}: Always speak your thoughts out loud or never be able to speak when you really should?",
     "{PLAYER}: Be complimented for your looks or for your personality for the rest of your life?",
@@ -950,7 +947,7 @@ window.QUESTION_DATA = [
     "{PLAYER}: Live one day completely invisible or one day where everyone notices everything you do?",
     "{PLAYER}: Have your laughter go viral or your serious face become a meme?",
     "{PLAYER}: Share a bed with a friend for warmth or a stranger for curiosity?",
-    "{PLAYER}: Forget how to flirt or forget how to say no?",
+    "{PLAYER}: Forget how to flirt or forget how to take a compliment?",
     "{PLAYER}: Have an amazing first impression but fade fast, or seem boring first but unforgettable later?",
     "{PLAYER}: Always be caught staring or always catch someone staring at you?",
     "{PLAYER}: Be honest all the time or mysterious forever?",
@@ -974,7 +971,6 @@ window.QUESTION_DATA = [
     "{PLAYER}: Have everyone believe you’re innocent when you’re not, or guilty when you are?",
     "{PLAYER}: Live in a world where nobody lies or where everyone lies politely?",
     "{PLAYER}: Be famous for something stupid or anonymous but content?",
-    "{PLAYER}: Always have to tell the last person you texted exactly what you think of them or post it publicly?",
     "{PLAYER}: Be cursed to hiccup every time you laugh or blush every time someone says your name?",
     "{PLAYER}: Wake up next to your celebrity crush or your worst ex with amnesia?",
     "{PLAYER}: Hear everything people say about you or never hear compliments again?",
@@ -983,7 +979,7 @@ window.QUESTION_DATA = [
     "{PLAYER}: Have a good story nobody believes or a boring one everyone does?",
     "{PLAYER}: Spend one year with no mirrors or one year with cameras everywhere?",
     "{PLAYER}: Be the last one laughing or the first one leaving?",
-    "{PLAYER}: Always find yourself in awkward silence or in oversharing conversations?",
+    "{PLAYER}: Always find yourself in awkward silence or always have to fill the silence with a bizarre story?",
     "{PLAYER}: Wake up every day in a new bed or eat the same meal forever?",
     "{PLAYER}: Have a perfect comeback five minutes too late or never at all?",
     "{PLAYER}: Forget your own birthday or forget everyone else’s?",
@@ -991,7 +987,17 @@ window.QUESTION_DATA = [
     "{PLAYER}: Be able to read minds during arguments or erase your own embarrassment instantly?",
     "{PLAYER}: Get stuck in traffic with your crush or with someone who can’t stop talking?",
     "{PLAYER}: Have your laughter sound weird forever or never laugh again?",
-    "{PLAYER}: Have to relive your worst day once a year or forget your best day completely?"
+    "{PLAYER}: Have to relive your worst day once a year or forget your best day completely?",
+    "{PLAYER}: Have a partner who is amazing in bed but terrible at emotional support, or vice versa?",
+    "{PLAYER}: Only be able to have sex with the lights fully on, or only in total, pitch-black darkness?",
+    "{PLAYER}: Have sex only with one person you know deeply for the rest of your life, or only with strangers?",
+    "{PLAYER}: Never be able to top again, or never be able to bottom again?",
+    "{PLAYER}: Lose all memory of your favorite sexual experience, or have your most embarrassing one happen again?",
+    "{PLAYER}: Have your partner always know exactly what turns you on, or always be surprised and experimental?",
+    "{PLAYER}: Be a perfect ten in bed but have a terrible kissing technique, or be a terrible ten in bed but an amazing kisser?",
+    "{PLAYER}: Have a very awkward conversation with a date’s parents immediately after you’ve had sex with them, or have your parents interrupt you during the act?",
+    "{PLAYER}: Be able to predict every move your partner will make during sex, or never know what your partner wants until they tell you?",
+    "{PLAYER}: Be forced to use a sexy nickname chosen by your partner forever, or have your partner call out the wrong name during orgasm just once?"
   ]
 }
 ];
