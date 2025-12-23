@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K-Spa Truth Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="questions.js"></script>
+    <style>
+        :root {
+            --pixel-pink: #e94560;
+            --pixel-blue: #0984e3;
+            --pixel-bg: #1a1a2e;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: var(--pixel-bg);
+            color: #fff;
+            image-rendering: pixelated;
+            overflow-x: hidden;
+        }
+
+        .pixel-border {
+            border: 4px solid #fff;
+            box-shadow: 4px 4px 0px #444;
+        }
+
+        .bottle-container {
+            transition: transform 3.5s cubic-bezier(0.15, 0, 0.15, 1);
+            filter: drop-shadow(0 5px 0 rgba(0,0,0,0.5));
+            z-index: 10;
+        }
+
+        .player-tag {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 2px 2px 0px #000;
+            white-space: nowrap;
+            font-size: 10px;
+        }
+
+        .player-tag.answered {
+            opacity: 0.3;
+            color: #888;
+            text-shadow: none;
+        }
+
+        .active-player {
+            color: #fbd38d !important;
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) scale(1.3);
+            z-index: 20;
+        }
+
+        .card-pop {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .scroll-pixel::-webkit-scrollbar { width: 8px; }
+        .scroll-pixel::-webkit-scrollbar-track { background: #16213e; }
+        .scroll-pixel::-webkit-scrollbar-thumb { background: var(--pixel-pink); }
+
+        .btn-pixel {
+            background: var(--pixel-pink);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 0 #922b3e;
+            margin-bottom: 4px;
+        }
+
+        .btn-pixel:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #922b3e;
+        }
+
+        .btn-pixel:disabled {
+            background: #555;
+            box-shadow: 0 4px 0 #333;
+            cursor: not-allowed;
+        }
+
+        .side-menu {
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: 0;
+            height: 100%;
+            width: 300px;
+            background: #16213e;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .menu-left { left: 0; transform: translateX(-100%); }
+        .menu-right { right: 0; transform: translateX(100%); }
+        .menu-open { transform: translateX(0); }
+
+        .skin-chip, .category-chip {
+            font-size: 8px;
+            padding: 8px;
+            margin: 2px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+        .skin-chip.active, .category-chip.active {
+            border-color: #fff;
+            background: var(--pixel-blue);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-0 m-0 relative">
+
+    <nav class="p-4 flex justify-between items-center z-50">
+        <button onclick="toggleMenu('settings')" class="btn-pixel text-[8px]">SETTINGS</button>
+        <h1 class="text-xs text-white hidden md:block uppercase">K-Spa Truth Game</h1>
+        <button onclick="toggleMenu('categories')" class="btn-pixel bg-blue-600 text-[8px]">CATEGORIES & SKINS</button>
+    </nav>
+
+    <!-- Settings Menu -->
+    <aside id="menu-settings" class="side-menu menu-left pixel-border border-l-0">
+        <div class="flex justify-between mb-4">
+            <h2 class="text-xs text-pink-500 uppercase">Players</h2>
+            <button onclick="toggleMenu('settings')" class="text-white text-xs">X</button>
+        </div>
+        
+        <div class="mb-6">
+            <div id="round-info" class="text-[7px] text-yellow-400 mb-2">ROUND 1</div>
+            <div class="flex gap-2 mb-2">
+                <input type="text" id="player-input" onkeydown="handlePlayerKey(event)" placeholder="NAME..." class="w-full p-2 bg-black border-2 border-white text-[10px] outline-none">
+                <button onclick="addPlayer()" class="btn-pixel text-[10px]">+</button>
+            </div>
+            <div id="player-list" class="max-h-60 overflow-y-auto scroll-pixel text-[8px] space-y-2"></div>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-[8px] text-yellow-400 mb-2 uppercase">Voice (TTS)</h3>
+            <select id="voice-select" class="w-full bg-black border-2 border-white text-[8px] p-2 outline-none mb-2"></select>
+            <label class="flex items-center gap-2 text-[8px] cursor-pointer">
+                <input type="checkbox" id="auto-speak" checked> AUTO READ
+            </label>
+        </div>
+    </aside>
+
+    <!-- Categories and Skins Menu -->
+    <aside id="menu-categories" class="side-menu menu-right pixel-border border-r-0 scroll-pixel overflow-y-auto">
+        <div class="flex justify-between mb-4">
+            <h2 class="text-xs text-blue-400 uppercase">Categories</h2>
+            <button onclick="toggleMenu('categories')" class="text-white text-xs">X</button>
+        </div>
+        <div id="category-list" class="flex flex-col gap-2 mb-8"></div>
+
+        <div class="mb-4">
+            <h2 class="text-xs text-yellow-400 uppercase">Object Skin</h2>
+        </div>
+        <div id="skin-list" class="grid grid-cols-2 gap-2"></div>
+    </aside>
+
+    <main class="flex-1 relative flex flex-col items-center justify-center overflow-hidden">
+        <div id="game-arena" class="relative w-full max-w-2xl h-[500px] flex items-center justify-center">
+            <div id="bottle-wrap" class="relative w-[300px] h-[300px] flex items-center justify-center">
+                <div id="bottle" class="bottle-container flex items-center justify-center"></div>
+                <div id="players-circle" class="absolute inset-0"></div>
+            </div>
+        </div>
+
+        <div class="w-full flex justify-center pb-12">
+            <button id="spin-btn" onclick="spinBottle()" class="btn-pixel text-sm px-12 py-3 uppercase">Spin!</button>
+        </div>
+    </main>
+
+    <!-- Question Card Overlay -->
+    <div id="card-overlay" class="hidden fixed inset-0 bg-black/80 z-[110] flex items-center justify-center p-4">
+        <div id="card-modal" class="pixel-border bg-white text-black p-10 max-w-2xl w-full card-pop text-center">
+            <div id="card-player-label" class="text-[14px] text-pink-600 mb-3 uppercase">PLAYER</div>
+            <div id="card-category-label" class="text-[10px] text-gray-400 mb-6 uppercase">CATEGORY</div>
+            
+            <p id="question-text" class="text-lg leading-relaxed mb-8 min-h-[120px] flex items-center justify-center font-bold uppercase"></p>
+
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <button onclick="skipQuestion()" class="btn-pixel bg-yellow-500 text-[10px] py-4 uppercase">Skip</button>
+                <button onclick="nopeQuestion()" class="btn-pixel bg-orange-600 text-[10px] py-4 uppercase">Refuse</button>
+                <button onclick="confirmAnswer()" class="btn-pixel bg-green-600 text-[10px] py-4 uppercase">Done</button>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button onclick="speakText()" class="btn-pixel bg-blue-600 text-[10px] px-6 py-3 uppercase">READ</button>
+                <button onclick="stopVoice()" class="btn-pixel bg-red-600 text-[10px] px-6 py-3 uppercase">STOP</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playRotationSound(progress) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            osc.type = 'sawtooth';
+            
+            const baseFreq = 60;
+            const dynamicFreq = baseFreq + (progress * 180);
+            osc.frequency.setValueAtTime(dynamicFreq, now);
+            
+            gain.gain.setValueAtTime(0.04 * progress, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.08);
+            
+            osc.start(now);
+            osc.stop(now + 0.08);
+        }
+
+        function playFeedbackSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'stop') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
+            } else if (type === 'done') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523, now);
+                osc.frequency.exponentialRampToValueAtTime(1046, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            }
+        }
+
+        const SKINS = {
+            bottle: { name: "Bottle", svg: `<svg class="w-24 h-24" viewBox="0 0 32 64"><rect x="12" y="0" width="8" height="12" fill="#777" /><rect x="10" y="12" width="12" height="10" fill="#2d3436" /><rect x="6" y="22" width="20" height="38" rx="4" fill="#0984e3" /><rect x="8" y="24" width="4" height="30" fill="#74b9ff" opacity="0.5" /></svg>` },
+            potion: { name: "Potion", svg: `<svg class="w-20 h-20" viewBox="0 0 32 32"><rect x="12" y="2" width="8" height="6" fill="#8e44ad" /><path d="M6 10 L26 10 L30 28 L2 28 Z" fill="#9b59b6" /><rect x="10" y="12" width="12" height="4" fill="#fff" opacity="0.3" /></svg>` },
+            sword: { name: "Sword", svg: `<svg class="w-24 h-24" viewBox="0 0 32 64"><rect x="14" y="0" width="4" height="48" fill="#bdc3c7" /><rect x="8" y="44" width="16" height="4" fill="#f1c40f" /><rect x="13" y="48" width="6" height="12" fill="#e67e22" /></svg>` },
+            eggplant: { name: "Eggplant", svg: `<svg class="w-20 h-24" viewBox="0 0 32 64"><path d="M16 4 Q16 10 12 12 Q8 14 8 30 Q8 50 16 60 Q24 50 24 30 Q24 14 20 12 Q16 10 16 4" fill="#4b0082" /><path d="M12 4 L20 4 L18 12 L14 12 Z" fill="#2ecc71" /></svg>` },
+            pizza: { name: "Pizza", svg: `<svg class="w-24 h-24" viewBox="0 0 32 32"><path d="M16 2 L4 26 L28 26 Z" fill="#f1c40f" /><path d="M4 26 L28 26 L29 30 L3 30 Z" fill="#e67e22" /><circle cx="16" cy="14" r="2.5" fill="#e74c3c" /><circle cx="11" cy="20" r="2" fill="#e74c3c" /><circle cx="21" cy="20" r="2" fill="#e74c3c" /></svg>` }
+        };
+
+        const state = {
+            players: ["EVERYONE"],
+            answeredInRound: [],
+            activeCategories: [],
+            usedQuestions: new Set(),
+            currentRotation: 0,
+            isSpinning: false,
+            currentPlayerIndex: null,
+            currentSkin: 'bottle',
+            voices: [],
+            roundNumber: 1
+        };
+
+        window.onload = () => {
+            if (typeof window.QUESTION_DATA === 'undefined') {
+                setTimeout(window.onload, 100);
+                return;
+            }
+            initCategories();
+            initSkins();
+            initTTS();
+            updatePlayerUI();
+            renderCircle();
+            updateSkin();
+        };
+
+        function toggleMenu(menuId) {
+            document.getElementById(`menu-${menuId}`).classList.toggle('menu-open');
+        }
+
+        function initCategories() {
+            const container = document.getElementById('category-list');
+            if (!container || !window.QUESTION_DATA) return;
+            container.innerHTML = '';
+            window.QUESTION_DATA.forEach((cat) => {
+                state.activeCategories.push(cat.title);
+                const chip = document.createElement('div');
+                chip.className = 'category-chip pixel-border active uppercase';
+                chip.innerText = cat.title;
+                chip.onclick = () => {
+                    chip.classList.toggle('active');
+                    if (state.activeCategories.includes(cat.title)) {
+                        state.activeCategories = state.activeCategories.filter(t => t !== cat.title);
+                    } else {
+                        state.activeCategories.push(cat.title);
+                    }
+                };
+                container.appendChild(chip);
+            });
+        }
+
+        function initSkins() {
+            const container = document.getElementById('skin-list');
+            Object.keys(SKINS).forEach(key => {
+                const chip = document.createElement('div');
+                chip.className = `skin-chip pixel-border uppercase ${state.currentSkin === key ? 'active' : ''}`;
+                chip.innerText = SKINS[key].name;
+                chip.onclick = () => {
+                    document.querySelectorAll('.skin-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    state.currentSkin = key;
+                    updateSkin();
+                };
+                container.appendChild(chip);
+            });
+        }
+
+        function updateSkin() { document.getElementById('bottle').innerHTML = SKINS[state.currentSkin].svg; }
+
+        function initTTS() {
+            const loadVoices = () => {
+                state.voices = window.speechSynthesis.getVoices();
+                const select = document.getElementById('voice-select');
+                if (select && state.voices.length > 0) {
+                    select.innerHTML = state.voices
+                        .map((v, i) => `<option value="${i}">${v.name} (${v.lang})</option>`)
+                        .join('');
+                    
+                    let targetIdx = state.voices.findIndex(v => v.name.includes("Google UK English Male"));
+                    if (targetIdx === -1) targetIdx = state.voices.findIndex(v => v.lang.startsWith("en-GB") && (v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("guy")));
+                    if (targetIdx === -1) targetIdx = state.voices.findIndex(v => v.lang.startsWith("en-GB"));
+                    if (targetIdx === -1) targetIdx = state.voices.findIndex(v => v.lang.startsWith("en-US") && v.name.toLowerCase().includes("male"));
+
+                    if (targetIdx !== -1) select.value = targetIdx;
+                }
+            };
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+            loadVoices();
+        }
+
+        function handlePlayerKey(event) { if (event.key === "Enter") addPlayer(); }
+
+        function addPlayer() {
+            const input = document.getElementById('player-input');
+            const name = input.value.trim().toUpperCase();
+            if (name && !state.players.includes(name)) {
+                state.players.push(name);
+                input.value = '';
+                updatePlayerUI(); renderCircle();
+            }
+        }
+
+        function removePlayer(index) {
+            state.players.splice(index, 1);
+            updatePlayerUI(); renderCircle();
+        }
+
+        function updatePlayerUI() {
+            const list = document.getElementById('player-list');
+            list.innerHTML = state.players.map((p, i) => `
+                <div class="flex justify-between items-center bg-black/40 p-2 ${state.answeredInRound.includes(p) ? 'opacity-40' : ''}">
+                    <span>> ${p}</span>
+                    <button onclick="removePlayer(${i})" class="text-red-500 font-bold">X</button>
+                </div>
+            `).join('');
+            document.getElementById('round-info').innerText = `ROUND ${state.roundNumber}`;
+            document.getElementById('spin-btn').disabled = state.players.length < 1;
+        }
+
+        function renderCircle() {
+            const container = document.getElementById('players-circle');
+            const radius = 135; const centerX = container.offsetWidth / 2; const centerY = container.offsetHeight / 2;
+            container.innerHTML = '';
+            state.players.forEach((name, i) => {
+                const angle = (i * (360 / state.players.length)) * (Math.PI / 180);
+                const x = centerX + radius * Math.cos(angle - Math.PI / 2);
+                const y = centerY + radius * Math.sin(angle - Math.PI / 2);
+                const div = document.createElement('div');
+                div.className = `player-tag uppercase ${state.answeredInRound.includes(name) ? 'answered' : ''}`;
+                div.id = `tag-${i}`;
+                div.style.left = `${x}px`; div.style.top = `${y}px`;
+                div.innerText = name;
+                container.appendChild(div);
+            });
+        }
+
+        function spinBottle() {
+            if (state.isSpinning || state.players.length < 1) return;
+            state.isSpinning = true;
+            document.querySelectorAll('.player-tag').forEach(t => t.classList.remove('active-player'));
+
+            const targetIdx = Math.floor(Math.random() * state.players.length);
+            const sectionSize = 360 / state.players.length;
+            const targetAngle = targetIdx * sectionSize;
+            const spins = 6 + Math.floor(Math.random() * 4);
+            const extra = (targetAngle - (state.currentRotation % 360) + 360) % 360;
+
+            const duration = 3500;
+            const start = Date.now();
+            
+            const soundInterval = setInterval(() => {
+                const elapsed = Date.now() - start;
+                const progress = 1 - (elapsed / duration); 
+                
+                if (progress > 0) {
+                    playRotationSound(progress);
+                } else {
+                    clearInterval(soundInterval);
+                    playFeedbackSound('stop');
+                }
+            }, 80);
+
+            state.currentRotation += (spins * 360) + extra;
+            document.getElementById('bottle').style.transform = `rotate(${state.currentRotation}deg)`;
+
+            setTimeout(() => {
+                state.currentPlayerIndex = targetIdx;
+                document.getElementById(`tag-${targetIdx}`).classList.add('active-player');
+                setTimeout(() => showQuestion(), 600);
+                state.isSpinning = false;
+            }, duration + 100);
+        }
+
+        function showQuestion() {
+            const playerName = state.players[state.currentPlayerIndex];
+            const isEveryone = playerName === "EVERYONE";
+            const pool = [];
+            window.QUESTION_DATA.forEach(cat => {
+                if (state.activeCategories.includes(cat.title)) {
+                    cat.items.forEach(q => {
+                        if (!state.usedQuestions.has(q)) {
+                            if (isEveryone && q.includes("{ALL}")) pool.push({ text: q, cat: cat.title });
+                            else if (!isEveryone && q.includes("{PLAYER}")) pool.push({ text: q, cat: cat.title });
+                        }
+                    });
+                }
+            });
+
+            if (pool.length === 0) {
+                state.usedQuestions.clear();
+                return showQuestion();
+            }
+
+            state.currentQuestion = pool[Math.floor(Math.random() * pool.length)];
+            const processedText = state.currentQuestion.text.replace(/{PLAYER}/g, playerName).replace(/{ALL}/g, "EVERYONE");
+            
+            document.getElementById('card-player-label').innerText = playerName;
+            document.getElementById('card-category-label').innerText = state.currentQuestion.cat;
+            document.getElementById('question-text').innerText = processedText;
+            document.getElementById('card-overlay').classList.remove('hidden');
+            
+            if (document.getElementById('auto-speak').checked) speakText();
+        }
+
+        function skipQuestion() { showQuestion(); }
+        function nopeQuestion() { if (state.currentQuestion) state.usedQuestions.add(state.currentQuestion.text); showQuestion(); }
+        function confirmAnswer() {
+            playFeedbackSound('done');
+            if (state.currentQuestion) state.usedQuestions.add(state.currentQuestion.text);
+            const name = state.players[state.currentPlayerIndex];
+            if (!state.answeredInRound.includes(name)) state.answeredInRound.push(name);
+            document.getElementById('card-overlay').classList.add('hidden');
+            window.speechSynthesis.cancel();
+            updatePlayerUI(); renderCircle();
+            if (state.answeredInRound.length >= state.players.length) {
+                state.answeredInRound = [];
+                state.roundNumber++;
+                setTimeout(() => { updatePlayerUI(); renderCircle(); }, 1000);
+            }
+        }
+
+        function speakText() {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(document.getElementById('question-text').innerText);
+            const voiceSelect = document.getElementById('voice-select');
+            if (voiceSelect && state.voices[voiceSelect.value]) {
+                utterance.voice = state.voices[voiceSelect.value];
+            }
+            window.speechSynthesis.speak(utterance);
+        }
+        function stopVoice() { window.speechSynthesis.cancel(); }
+    </script>
+</body>
+</html>
